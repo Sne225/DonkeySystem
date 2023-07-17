@@ -1,0 +1,505 @@
+import React, { useState, useEffect } from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  Switch,
+  ScrollView,
+  Button,
+  TouchableOpacity,
+  Image,
+  Alert,
+} from 'react-native';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import { Ionicons } from '@expo/vector-icons';
+import * as ImagePicker from 'expo-image-picker';
+import { auth, firestore } from '../firebase';
+import { collection, doc, setDoc, getDoc, Timestamp } from 'firebase/firestore';
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+
+
+const CreateReportScreen = () => {
+  const [date, setDate] = useState(new Date());
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [ownerName, setOwnerName] = useState('');
+  const [location, setLocation] = useState('');
+  const [donkeyCount, setDonkeyCount] = useState(0);
+  const [maleAdultCount, setMaleAdultCount] = useState(0);
+  const [maleCastratedCount, setMaleCastratedCount] = useState(0);
+  const [femaleAdultCount, setFemaleAdultCount] = useState(0);
+  const [maleFoalCount, setMaleFoalCount] = useState(0);
+  const [femaleFoalCount, setFemaleFoalCount] = useState(0);
+  const [poorHealth, setPoorHealth] = useState(false);
+  const [photo, setPhoto] = useState(null);
+  const [ownerReports, setOwnerReports] = useState('');
+  const [observations, setObservations] = useState('');
+  const [adviceHelp, setAdviceHelp] = useState('');
+  const [contactVets, setContactVets] = useState(false);
+  const [followUp, setFollowUp] = useState(false);
+  const [followUpDate, setFollowUpDate] = useState(null);
+
+  const handleDateChange = (event, selectedDate) => {
+    const currentDate = selectedDate || date;
+    setShowDatePicker(false);
+    setDate(currentDate);
+  };
+
+  const handleImagePick = async () => {
+    try {
+      const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (permissionResult.granted === false) {
+        Alert.alert(
+          'Permission Required',
+          'Please grant access to your photo library to pick an image.'
+        );
+        return;
+      }
+
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 0.7,
+      });
+
+      if (!result.canceled) {
+        setPhoto(result.uri);
+      }
+    } catch (error) {
+      console.log('Error picking image:', error);
+    }
+  };
+
+  const handleRemovePhoto = () => {
+    setPhoto(null);
+  };
+
+  const storage = getStorage();
+
+  const createReportCollection = async (userId) => {
+    const userDocRef = doc(firestore, 'users', userId);
+    const userDocSnapshot = await getDoc(userDocRef);
+  
+    if (!userDocSnapshot.exists()) {
+      await setDoc(userDocRef, {});
+    }
+  
+    const reportCollectionRef = collection(userDocRef, 'reports');
+    const reportCollectionSnapshot = await getDoc(reportCollectionRef);
+  
+    if (!reportCollectionSnapshot.exists()) {
+      await setDoc(reportCollectionRef, {});
+    }
+  };
+
+  const handleSubmit = async () => {
+    // Save the report data to Firestore
+    if (!date || !location || !ownerName) {
+        Alert.alert('Missing Fields', 'Please fill in all required fields.');
+        return;
+      }
+
+      let photoUrl = null;
+      if (photo) {
+        const photoRef = ref(storage, `photos/${Date.now()}`);
+        await uploadBytes(photoRef, photo);
+        photoUrl = await getDownloadURL(photoRef);
+      }
+
+    const reportData = {
+        date: Timestamp.fromDate(new Date(date)), // Convert date to Firestore timestamp
+        ownerName,
+        location,
+        donkeyCount: Number(donkeyCount), // Convert to a number if needed
+        maleAdultCount: Number(maleAdultCount),
+        maleCastratedCount: Number(maleCastratedCount),
+        femaleAdultCount: Number(femaleAdultCount),
+        maleFoalCount: Number(maleFoalCount),
+        femaleFoalCount: Number(femaleFoalCount),
+        poorHealth,
+        photo: photoUrl,
+        ownerReports,
+        observations,
+        adviceHelp,
+        contactVets,
+        followUp,
+        followUpDate: followUpDate ? Timestamp.fromDate(new Date(followUpDate)) : null, 
+    };
+
+    // Save the report data to Firestore with the current user's ID
+    const currentUser = auth.currentUser;
+    const userId = currentUser ? currentUser.uid : null;
+
+    if (userId) {
+
+     try {
+        await createReportCollection(userId);
+
+        const reportDocRef = doc(firestore, 'users', userId, 'reports');
+        const docRef = await setDoc(reportDocRef, reportData);
+        console.log('Report created with ID:', docRef.id);
+
+      // Reset the form after submitting
+
+
+      setDate(new Date());
+      setOwnerName('');
+      setLocation('');
+      setDonkeyCount(0);
+      setMaleAdultCount(0);
+      setMaleCastratedCount(0);
+      setFemaleAdultCount(0);
+      setMaleFoalCount(0);
+      setFemaleFoalCount(0);
+      setPoorHealth(false);
+      setPhoto(null);
+      setOwnerReports('');
+      setObservations('');
+      setAdviceHelp('');
+      setContactVets(false);
+      setFollowUp(false);
+      setFollowUpDate(null);
+     }  
+     catch (error) {
+        console.error('Error creating report:', error);
+        // Handle any error cases
+      }
+    }
+  };
+
+  return (
+    <ScrollView contentContainerStyle={styles.container}>
+      <TouchableOpacity style={styles.datePicker} onPress={() => setShowDatePicker(true)}>
+        <Text style={styles.dateText}><Text style={styles.label}>Date</Text> {date.toDateString()}</Text>
+        
+        {showDatePicker && (
+          <DateTimePicker
+            value={date}
+            mode="date"
+            display="default"
+            onChange={handleDateChange}
+          />
+        )}
+      </TouchableOpacity>
+
+      <View style={styles.fieldContainer}>
+        <Text style={styles.label}>Name of Donkey Owner</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Enter the name"
+          value={ownerName}
+          onChangeText={setOwnerName}
+        />
+      </View>
+
+      <View style={styles.fieldContainer}>
+        <Text style={styles.label}>Location of Donkey Owner Property</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Enter the location"
+          value={location}
+          onChangeText={setLocation}
+        />
+      </View>
+
+      <View style={styles.fieldContainer}>
+        <Text style={styles.label}>Number of Donkeys Owned</Text>
+        <View style={styles.counterContainer}>
+          <TouchableOpacity
+            style={styles.counterButton}
+            onPress={() => setDonkeyCount(donkeyCount > 0 ? donkeyCount - 1 : 0)}
+          >
+            <Ionicons name="remove" size={20} color="white" />
+          </TouchableOpacity>
+          <Text style={styles.counterText}>{donkeyCount}</Text>
+          <TouchableOpacity
+            style={styles.counterButton}
+            onPress={() => setDonkeyCount(donkeyCount + 1)}
+          >
+            <Ionicons name="add" size={20} color="white" />
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      <View style={styles.fieldContainer}>
+        <Text style={styles.label}>Number of Adult Males (Not castrated)</Text>
+        <View style={styles.counterContainer}>
+          <TouchableOpacity
+            style={styles.counterButton}
+            onPress={() => setMaleAdultCount(maleAdultCount > 0 ? maleAdultCount - 1 : 0)}
+          >
+            <Ionicons name="remove" size={20} color="white" />
+          </TouchableOpacity>
+          <Text style={styles.counterText}>{maleAdultCount}</Text>
+          <TouchableOpacity
+            style={styles.counterButton}
+            onPress={() => setMaleAdultCount(maleAdultCount + 1)}
+          >
+            <Ionicons name="add" size={20} color="white" />
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      <View style={styles.fieldContainer}>
+        <Text style={styles.label}>Number of Adult Castrated Males</Text>
+        <View style={styles.counterContainer}>
+          <TouchableOpacity
+            style={styles.counterButton}
+            onPress={() => setMaleCastratedCount(maleCastratedCount > 0 ? maleCastratedCount - 1 : 0)}
+          >
+            <Ionicons name="remove" size={20} color="white" />
+          </TouchableOpacity>
+          <Text style={styles.counterText}>{maleCastratedCount}</Text>
+          <TouchableOpacity
+            style={styles.counterButton}
+            onPress={() => setMaleCastratedCount(maleCastratedCount + 1)}
+          >
+            <Ionicons name="add" size={20} color="white" />
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      <View style={styles.fieldContainer}>
+        <Text style={styles.label}>Number of Adult Females</Text>
+        <View style={styles.counterContainer}>
+          <TouchableOpacity
+            style={styles.counterButton}
+            onPress={() => setFemaleAdultCount(femaleAdultCount > 0 ? femaleAdultCount - 1 : 0)}
+          >
+            <Ionicons name="remove" size={20} color="white" />
+          </TouchableOpacity>
+          <Text style={styles.counterText}>{femaleAdultCount}</Text>
+          <TouchableOpacity
+            style={styles.counterButton}
+            onPress={() => setFemaleAdultCount(femaleAdultCount + 1)}
+          >
+            <Ionicons name="add" size={20} color="white" />
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      <View style={styles.fieldContainer}>
+        <Text style={styles.label}>Number of Male Foals</Text>
+        <View style={styles.counterContainer}>
+          <TouchableOpacity
+            style={styles.counterButton}
+            onPress={() => setMaleFoalCount(maleFoalCount > 0 ? maleFoalCount - 1 : 0)}
+          >
+            <Ionicons name="remove" size={20} color="white" />
+          </TouchableOpacity>
+          <Text style={styles.counterText}>{maleFoalCount}</Text>
+          <TouchableOpacity
+            style={styles.counterButton}
+            onPress={() => setMaleFoalCount(maleFoalCount + 1)}
+          >
+            <Ionicons name="add" size={20} color="white" />
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      <View style={styles.fieldContainer}>
+        <Text style={styles.label}>Number of Female Foals</Text>
+        <View style={styles.counterContainer}>
+          <TouchableOpacity
+            style={styles.counterButton}
+            onPress={() => setFemaleFoalCount(femaleFoalCount > 0 ? femaleFoalCount - 1 : 0)}
+          >
+            <Ionicons name="remove" size={20} color="white" />
+          </TouchableOpacity>
+          <Text style={styles.counterText}>{femaleFoalCount}</Text>
+          <TouchableOpacity
+            style={styles.counterButton}
+            onPress={() => setFemaleFoalCount(femaleFoalCount + 1)}
+          >
+            <Ionicons name="add" size={20} color="white" />
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      {/* Repeat the above pattern for other fields */}
+
+      <View style={styles.fieldContainer}>
+        <Text style={styles.label}>Are There Donkeys Showing Signs of Poor Health?</Text>
+        <Switch value={poorHealth} onValueChange={setPoorHealth} />
+      </View>
+
+      {/* Photo Field */}
+      <View style={styles.fieldContainer}>
+        <Text style={styles.label}>Take a Photo of the Donkey</Text>
+        <TouchableOpacity style={styles.photoButton} onPress={handleImagePick}>
+          {photo ? (
+            <Image source={{ uri: photo }} style={styles.photoPreview} />
+          ) : (
+            <Text style={styles.photoButtonText}>Take Photo</Text>
+          )}
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.photoButton} onPress={handleRemovePhoto}>
+                <Ionicons name="close-circle-outline" size={24} color="white" />
+              </TouchableOpacity>
+      </View>
+
+      {/* Owner Reports */}
+      <View style={styles.fieldContainer}>
+        <Text style={styles.label}>Owner Reports</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Enter the owner reports"
+          value={ownerReports}
+          onChangeText={setOwnerReports}
+          multiline
+        />
+      </View>
+
+      {/* Observations */}
+      <View style={styles.fieldContainer}>
+        <Text style={styles.label}>Observations</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Enter your observations"
+          value={observations}
+          onChangeText={setObservations}
+          multiline
+        />
+      </View>
+
+      {/* Advice */}
+      <View style={styles.fieldContainer}>
+        <Text style={styles.label}>Advices & Help</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Enter your advice or help given"
+          value={adviceHelp}
+          onChangeText={setAdviceHelp}
+          multiline
+        />
+      </View>
+
+      <View style={styles.fieldContainer}>
+        <Text style={styles.label}>Did You Need to Contact the Vets?</Text>
+        <Switch value={contactVets} onValueChange={setContactVets} />
+      </View>
+
+      {/* Follow-up */}
+      <View style={styles.fieldContainer}>
+        <Text style={styles.label}>Have You Scheduled a Follow-up Visit?</Text>
+        <Switch value={followUp} onValueChange={setFollowUp} />
+      </View>
+
+      {followUp && (
+        <View style={styles.fieldContainer}>
+          <Text style={styles.label}>Date of Follow-up Visit</Text>
+          <TouchableOpacity style={styles.datePicker} onPress={() => setShowDatePicker(true)}>
+            <Text style={styles.dateText}>
+              {followUpDate ? followUpDate.toDateString() : 'Select a date'}
+            </Text>
+            {showDatePicker && (
+              <DateTimePicker
+                value={followUpDate || new Date()}
+                mode="date"
+                display="default"
+                onChange={(event, selectedDate) => {
+                  const currentDate = selectedDate || followUpDate;
+                  setShowDatePicker(false);
+                  setFollowUpDate(currentDate);
+                }}
+              />
+            )}
+          </TouchableOpacity>
+        </View>
+      )}
+
+      <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+        <Ionicons name="rocket" size={24} color="white" />
+        <Text style={styles.submitButtonText}>Submit</Text>
+      </TouchableOpacity>
+    </ScrollView>
+  );
+};
+
+const styles = {
+  container: {
+    flexGrow: 1,
+    alignItems: 'center',
+    paddingVertical: 20,
+    paddingHorizontal: 10,
+  },
+  fieldContainer: {
+    width: '100%',
+    marginBottom: 20,
+  },
+  label: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 5,
+    color: '#009387',
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+    padding: 10,
+  },
+  datePicker: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    marginBottom: 20,
+  },
+  dateText: {
+    fontSize: 16,
+  },
+  counterContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  counterButton: {
+    backgroundColor: '#009387',
+    borderRadius: 15,
+    padding: 5,
+    marginHorizontal: 5,
+  },
+  counterText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  photoButton: {
+    backgroundColor: '#009387',
+    borderRadius: 5,
+    padding: 10,
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  photoPreview: {
+    width: 100,
+    height: 100,
+    marginBottom: 10,
+  },
+  photoButtonText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: 'white',
+  },
+  submitButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#009387',
+    borderRadius: 5,
+    width: '80%',
+    padding: 10,
+    marginBottom: 60,
+  },
+  submitButtonText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginLeft: 5,
+    color: 'white',
+  },
+};
+
+export default CreateReportScreen;
