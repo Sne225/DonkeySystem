@@ -43,7 +43,7 @@ const CreateAccountScreen = () => {
       });
   
       // Display success message or navigate to the next screen
-      navigation.replace('Home');
+      navigation.navigate('Home');
 
     } catch (error) {
       // Handle sign-up error, such as displaying an error message
