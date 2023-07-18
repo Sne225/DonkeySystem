@@ -16,6 +16,7 @@ const LoginScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');  
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [error, setError] = useState(''); 
 
   const logoScale = useSharedValue(0);
 
@@ -43,6 +44,22 @@ const LoginScreen = () => {
       // const auth = getAuth();
   
       // Sign in the user using Firebase Authentication
+      if (email.trim() === '') {
+        Alert.alert('Error', 'Please enter your email address.');
+        return;
+      }
+  
+      if (password.trim() === '') {
+        Alert.alert('Error', 'Please enter a password');
+        return;
+      }
+
+      if (password.length < 6)
+      {
+        Alert.alert('Error', 'Password short. 6 or more characters required!');
+        return;
+      }
+
       await signInWithEmailAndPassword(auth, email, password)
       .then(userCredentials => {
         const user = userCredentials.user;
@@ -70,6 +87,16 @@ const LoginScreen = () => {
       console.log(error);
     });
   }};
+
+  const handleValidation = () => {
+    if (inputValue.trim() === '') {
+      setError('Input value cannot be empty');
+    } else if (inputValue.length < 6) {
+      setError('Input value should be at least 6 characters long');
+    } else {
+      // Perform other actions or submit the form
+    }
+  };
   
 
   const handleCreateAccount = () => {
