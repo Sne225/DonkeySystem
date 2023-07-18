@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { FontAwesome } from '@expo/vector-icons';
 import Animated, { useSharedValue, useAnimatedStyle, withTiming, Easing, interpolate, Extrapolate,} from 'react-native-reanimated';
@@ -36,23 +36,32 @@ const LoginScreen = () => {
   }, [])
 
   const handleSignIn = async () => {
-    try {
+     {
       // const auth = getAuth();
   
       // Sign in the user using Firebase Authentication
       await signInWithEmailAndPassword(auth, email, password)
       .then(userCredentials => {
         const user = userCredentials.user;
+        Alert.alert('Success', 'Logged in successfully');
         console.log('Logged in with:', user.email);
     })
-  
       // Navigate to the next screen
       // navigate('NextScreen');
-    } catch (error) {
+    .catch(error => {
       // Handle sign-in error, such as displaying an error message
+      if (error.code === 'auth/invalid-email') {
+        Alert.alert('Error', 'Invalid email');
+      } else if (error.code === 'auth/wrong-password') {
+        Alert.alert('Error', 'Wrong password');
+      } else if (error.code === 'auth/operation-not-allowed') {
+        Alert.alert('Error', 'Email/password sign-in is not enabled');
+      } else {
+        Alert.alert('Error', 'Login failed');
+      }
       console.log(error);
-    }
-  };
+    });
+  }};
   
 
   const handleCreateAccount = () => {
