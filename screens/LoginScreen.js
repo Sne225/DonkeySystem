@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { FontAwesome } from '@expo/vector-icons';
+import Modal from 'react-native-modal';
+import Icon from 'react-native-vector-icons/FontAwesome';
 import Animated, { useSharedValue, useAnimatedStyle, withTiming, Easing, interpolate, Extrapolate,} from 'react-native-reanimated';
 // import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
@@ -12,7 +14,8 @@ const LoginScreen = () => {
   const navigation = useNavigation();
 
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [password, setPassword] = useState('');  
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const logoScale = useSharedValue(0);
 
@@ -23,17 +26,17 @@ const LoginScreen = () => {
     });
   }, []);
 
-  useEffect(() => {
-    // const auth = getAuth();
+  // useEffect(() => {
+  //   // const auth = getAuth();
 
-    const unsubscribe = auth.onAuthStateChanged(user => {
-      if (user) {
-        navigation.replace("Home")
-      }
-    })
+  //   const unsubscribe = auth.onAuthStateChanged(user => {
+  //     if (user) {
+  //       navigation.replace("Home")
+  //     }
+  //   })
 
-    return unsubscribe
-  }, [])
+  //   return unsubscribe
+  // }, [])
 
   const handleSignIn = async () => {
      {
@@ -43,7 +46,12 @@ const LoginScreen = () => {
       await signInWithEmailAndPassword(auth, email, password)
       .then(userCredentials => {
         const user = userCredentials.user;
-        Alert.alert('Success', 'Logged in successfully');
+
+        setShowSuccessModal(true);
+    setTimeout(() => {
+      setShowSuccessModal(false);
+      navigation.replace("Home");
+    }, 2500);
         console.log('Logged in with:', user.email);
     })
       // Navigate to the next screen
@@ -102,6 +110,36 @@ const LoginScreen = () => {
       >
         <Text style={styles.buttonText}>Sign in</Text>
       </TouchableOpacity>
+      {/* <Modal isVisible={showSuccessModal}>
+        <View
+          style={{
+            backgroundColor: '#009387',
+            padding: 20,
+            borderRadius: 10,
+            alignItems: 'center',
+          }}
+        >
+          <Text style={{ color: 'white', fontSize: 18, fontWeight: 'bold' }}>
+            Successfully signed in!
+          </Text>
+        </View>
+      </Modal> */}
+      <Modal isVisible={showSuccessModal}>
+        <View
+          style={{
+            backgroundColor: '#009387',
+            padding: 20,
+            borderRadius: 10,
+            alignItems: 'center',
+            flexDirection: 'row',
+          }}
+        >
+          <Icon name="check" size={20} color="white" />
+          <Text style={{ color: 'white', fontSize: 18, fontWeight: 'bold', marginLeft: 10 }}>
+            Successfully signed in!
+          </Text>
+        </View>
+      </Modal>
       <TouchableOpacity
         style={[styles.button, { backgroundColor: 'white' }]}
         onPress={handleCreateAccount}
