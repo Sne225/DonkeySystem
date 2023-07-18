@@ -135,7 +135,7 @@ const LoginScreen = () => {
           }}
         >
           <Icon name="check" size={20} color="white" />
-          <Text style={{ color: 'white', fontSize: 18, fontWeight: 'bold', marginLeft: 10 }}>
+          <Text style={{ color: 'white', fontSize: 18, fontWeight: 'bold', marginLeft: 30 }}>
             Successfully signed in!
           </Text>
         </View>
