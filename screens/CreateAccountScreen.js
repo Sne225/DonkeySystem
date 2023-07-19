@@ -5,6 +5,8 @@ import { FontAwesome } from '@expo/vector-icons';
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
 import { getFirestore, setDoc, doc } from 'firebase/firestore';
 import { useNavigation } from '@react-navigation/core';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import Modal from 'react-native-modal';
 
 const CreateAccountScreen = () => {
 
@@ -16,6 +18,8 @@ const CreateAccountScreen = () => {
   const [email, setEmail] = useState('');
   const [city, setCity] = useState('');
   const [password, setPassword] = useState('');
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+
 
   const handleSignUp = async () => {
     try {
@@ -25,6 +29,7 @@ const CreateAccountScreen = () => {
       await createUserWithEmailAndPassword(auth, email, password)
       .then(userCredentials => {
         const user = userCredentials.user;
+       
         console.log('Registered with:', user.email);
     })
   
@@ -43,7 +48,11 @@ const CreateAccountScreen = () => {
       });
   
       // Display success message or navigate to the next screen
-      navigation.navigate('Home');
+      setShowSuccessModal(true);
+        setTimeout(() => {
+          setShowSuccessModal(false);
+          navigation.replace("Home");
+        }, 2500);
 
     } catch (error) {
       // Handle sign-up error, such as displaying an error message
@@ -111,7 +120,22 @@ const CreateAccountScreen = () => {
       <TouchableOpacity style={styles.signUpButton} onPress={handleSignUp}>
         <Text style={styles.signUpButtonText}>Create Account</Text>
       </TouchableOpacity>
-
+      <Modal isVisible={showSuccessModal}>
+        <View
+          style={{
+            backgroundColor: '#009387',
+            padding: 20,
+            borderRadius: 10,
+            alignItems: 'center',
+            flexDirection: 'row',
+          }}
+        >
+          <Icon name="check" size={20} color="white" />
+          <Text style={{ color: 'white', fontSize: 18, fontWeight: 'bold', marginLeft: 10 }}>
+            Account Created Successfully!
+          </Text>
+        </View>
+      </Modal>
       <View style={styles.socialButtonContainer}>
         <TouchableOpacity style={styles.socialButton}>
           <FontAwesome name="facebook" size={20} color="#009387" />
@@ -120,9 +144,11 @@ const CreateAccountScreen = () => {
         <TouchableOpacity style={styles.socialButton}>
           <FontAwesome name="google" size={20} color="#009387" />
         </TouchableOpacity>
+        
       </View>
 
       <Text style={styles.signUpText}>Sign up with a different account</Text>
+      
     </View>
   );
 };
