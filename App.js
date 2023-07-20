@@ -6,6 +6,7 @@ import LoginScreen from './screens/LoginScreen';
 import HomeScreen from './screens/HomeScreen';
 import CreateAccount from './screens/CreateAccountScreen';
 import CreateReportScreen from './screens/CreateReportScreen';
+// import LoginScreen from './src/views/screens/LoginScreen';
 
 
 const Stack = createNativeStackNavigator();

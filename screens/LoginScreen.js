@@ -45,23 +45,23 @@ const LoginScreen = () => {
   
       // Sign in the user using Firebase Authentication
       if (email.trim() === '') {
-        Alert.alert('Error', 'Please enter your email address.');
+        Alert.alert('Error Login', 'Please enter your email address.');
         return;
       }
 
       if (!isValidEmail(email)) {
-        Alert.alert('Error', 'Please enter a valid email address');
+        Alert.alert('Error Login', 'Please enter a valid email address');
         return;
       }
   
       if (password.trim() === '') {
-        Alert.alert('Error', 'Please enter a password');
+        Alert.alert('Error Login', 'Please enter a password');
         return;
       }
 
       if (password.length < 6)
       {
-        Alert.alert('Error', 'Password short. Please enter 6 characters or more!');
+        Alert.alert('Error Login', 'Password short. Please enter 6 characters or more!');
         return;
       }
 
@@ -79,15 +79,16 @@ const LoginScreen = () => {
       // Navigate to the next screen
       // navigate('NextScreen');
     .catch(error => {
+      
       // Handle sign-in error, such as displaying an error message
       if (error.code === 'auth/invalid-email') {
-        Alert.alert('Error', 'Your email is invalid. Please try again.');
+        Alert.alert('Error Login', 'Your email is invalid. Please try again.');
       } else if (error.code === 'auth/wrong-password') {
-        Alert.alert('Error', 'Incorrect Password. Please try again.');
+        Alert.alert('Error Login', 'Incorrect Password. Please try again.');
       } else if (error.code === 'auth/operation-not-allowed') {
-        Alert.alert('Error', 'Email/password sign-in is not enabled');
+        Alert.alert('Error Login', 'Email/password sign-in is not enabled');
       }  else if (error.code === 'auth/user-not-found') {
-        Alert.alert('Error', 'This user does not exist. Please try again.');
+        Alert.alert('Error Login', 'This user does not exist. Please try again.');
       } else {
         Alert.alert('Error', 'Login failed');
       }
