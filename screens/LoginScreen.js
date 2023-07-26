@@ -61,7 +61,7 @@ const LoginScreen = () => {
 
       if (password.length < 6)
       {
-        Alert.alert('Error Login', 'Password short. Please enter 6 characters or more!');
+        Alert.alert('Error Login', 'Password short. Please enter at leeast characters!');
         return;
       }
 
@@ -89,6 +89,8 @@ const LoginScreen = () => {
         Alert.alert('Error Login', 'Email/password sign-in is not enabled');
       }  else if (error.code === 'auth/user-not-found') {
         Alert.alert('Error Login', 'This user does not exist. Please try again.');
+      } else if (error.code === 'auth/too-many-requests') {
+        Alert.alert('Account Temporary Locked', 'Access to this account has been temporarily disabled due to many failed login attempts. You can immediately restore it by resetting your password or you can try again later.');
       } else {
         Alert.alert('Error', 'Login failed');
       }
@@ -107,6 +109,7 @@ const LoginScreen = () => {
     navigation.navigate('CreateAccount');
   };
 
+  //Animation of logo
   const logoStyle = useAnimatedStyle(() => {
     const scale = interpolate(logoScale.value, [0, 1], [0.5, 1], Extrapolate.CLAMP);
     return {
@@ -122,6 +125,7 @@ const LoginScreen = () => {
           style={styles.logo}
         />
       </Animated.View>
+      
       <TextInput
         style={styles.input}
         placeholder="Email"
@@ -141,20 +145,8 @@ const LoginScreen = () => {
       >
         <Text style={styles.buttonText}>Sign in</Text>
       </TouchableOpacity>
-      {/* <Modal isVisible={showSuccessModal}>
-        <View
-          style={{
-            backgroundColor: '#009387',
-            padding: 20,
-            borderRadius: 10,
-            alignItems: 'center',
-          }}
-        >
-          <Text style={{ color: 'white', fontSize: 18, fontWeight: 'bold' }}>
-            Successfully signed in!
-          </Text>
-        </View>
-      </Modal> */}
+      
+      {/* Success Modal*/}
       <Modal isVisible={showSuccessModal}>
         <View
           style={{
