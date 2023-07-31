@@ -89,22 +89,6 @@ const CreateReportScreen = () => {
 
   const storage = getStorage();
 
-  // const createReportCollection = async (userId) => {
-  //   const userDocRef = doc(firestore, 'users', userId);
-  //   const userDocSnapshot = await getDoc(userDocRef);
-  
-  //   if (!userDocSnapshot.exists()) {
-  //     await setDoc(userDocRef, {});
-  //   }
-  
-  //   const reportCollectionRef = collection(userDocRef, 'reports');
-  //   const reportCollectionSnapshot = await getDoc(reportCollectionRef);
-  
-  //   if (!reportCollectionSnapshot.exists()) {
-  //     await setDoc(reportCollectionRef, {});
-  //   }
-  // };
-
   const createReportCollection = async (userId) => {
     const userDocRef = doc(firestore, 'users', userId);
     const userDocSnapshot = await getDoc(userDocRef);
@@ -117,81 +101,6 @@ const CreateReportScreen = () => {
     // You don't need to check if the collection exists because it will be created automatically when you add a document to it.
     return reportCollectionRef;
   };
-
-  // const handleSubmit = async () => {
-  //   // Save the report data to Firestore
-  //   if (!date || !location || !ownerName) {
-  //       Alert.alert('Missing Fields', 'Please fill in all required fields.');
-  //       return;
-  //     }
-
-  //     let photoUrl = null;
-  //     if (photo) {
-  //       const photoRef = ref(storage, `photos/${Date.now()}`);
-  //       await uploadBytes(photoRef, photo);
-  //       photoUrl = await getDownloadURL(photoRef);
-  //     }
-
-  //   const reportData = {
-  //       date: Timestamp.fromDate(new Date(date)), // Convert date to Firestore timestamp
-  //       ownerName,
-  //       location,
-  //       donkeyCount: Number(donkeyCount), // Convert to a number if needed
-  //       maleAdultCount: Number(maleAdultCount),
-  //       maleCastratedCount: Number(maleCastratedCount),
-  //       femaleAdultCount: Number(femaleAdultCount),
-  //       maleFoalCount: Number(maleFoalCount),
-  //       femaleFoalCount: Number(femaleFoalCount),
-  //       poorHealth,
-  //       photo: photoUrl,
-  //       ownerReports,
-  //       observations,
-  //       adviceHelp,
-  //       contactVets,
-  //       followUp,
-  //       followUpDate: followUpDate ? Timestamp.fromDate(new Date(followUpDate)) : null, 
-  //   };
-
-  //   // Save the report data to Firestore with the current user's ID
-  //   const currentUser = auth.currentUser;
-  //   const userId = currentUser ? currentUser.uid : null;
-
-  //   if (userId) {
-
-  //    try {
-  //       await createReportCollection(userId);
-
-  //       const reportDocRef = doc(firestore, 'users', userId, 'reports');
-  //       const docRef = await setDoc(reportDocRef, reportData);
-  //       console.log('Report created with ID:', docRef.id);
-
-  //     // Reset the form after submitting
-
-
-  //     setDate(new Date());
-  //     setOwnerName('');
-  //     setLocation('');
-  //     setDonkeyCount(0);
-  //     setMaleAdultCount(0);
-  //     setMaleCastratedCount(0);
-  //     setFemaleAdultCount(0);
-  //     setMaleFoalCount(0);
-  //     setFemaleFoalCount(0);
-  //     setPoorHealth(false);
-  //     setPhoto(null);
-  //     setOwnerReports('');
-  //     setObservations('');
-  //     setAdviceHelp('');
-  //     setContactVets(false);
-  //     setFollowUp(false);
-  //     setFollowUpDate(null);
-  //    }  
-  //    catch (error) {
-  //       console.error('Error creating report:', error);
-  //       // Handle any error cases
-  //     }
-  //   }
-  // };
 
   const handleSubmit = async () => {
     // Save the report data to Firestore

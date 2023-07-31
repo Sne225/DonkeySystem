@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, ScrollView, Image } from 'react-native';
 import { useRoute } from '@react-navigation/native';
 import { firestore, auth } from '../firebase';
 import {collection, doc, getDoc} from 'firebase/firestore'
+import { getStorage, ref, getDownloadURL } from 'firebase/storage';
 
 const ReportDetailsScreen = () => {
   const route = useRoute();
@@ -77,6 +78,7 @@ const ReportDetailsScreen = () => {
       <Text style={styles.value}>{reportData.femaleFoalCount}</Text>
       <Text style={styles.label}>Poor Health:</Text>
       <Text style={styles.value}>{reportData.poorHealth ? 'Yes' : 'No'}</Text>
+      <Text style={styles.label}>Photo:</Text>
       {reportData.photo && <Image source={{ uri: reportData.photo }} style={styles.photo} />}
       <Text style={styles.label}>Owner Reports:</Text>
       <Text style={styles.value}>{reportData.ownerReports}</Text>
