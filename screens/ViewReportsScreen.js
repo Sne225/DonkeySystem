@@ -5,6 +5,8 @@ import { collection, query, where, getDocs, deleteDoc, doc } from 'firebase/fire
 import { auth, firestore } from '../firebase';
 import { Ionicons } from '@expo/vector-icons';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import Menu, { MenuItem } from 'react-native-popup-menu';
+
 
 
 
@@ -88,6 +90,7 @@ const ViewReportScreen = ( {reportId}) => {
 
     </TouchableOpacity>
   );
+  
 
   return (
     <View style={styles.container}>

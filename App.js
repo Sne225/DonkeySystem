@@ -32,8 +32,8 @@ export default function App() {
         <Stack.Screen name="CreateReport" component={CreateReportScreen} options={{
           title: 'Create Report', headerLeft: null,
         }}/>
-        <Stack.Screen name="ViewReports" component={ViewReportsScreen} />
-        <Stack.Screen name="ReportDetails" component={ReportDetailsScreen} />
+        <Stack.Screen name="ViewReports" component={ViewReportsScreen} options={{title: 'View Reports',}}/>
+        <Stack.Screen name="ReportDetails" component={ReportDetailsScreen} options={{title: 'Report Details',}}/>
 
         
       </Stack.Navigator>

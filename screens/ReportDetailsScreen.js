@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Image } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity, Alert } from 'react-native';
 import { useRoute } from '@react-navigation/native';
 import { firestore, auth } from '../firebase';
 import {collection, doc, getDoc} from 'firebase/firestore'
 import { getStorage, ref, getDownloadURL } from 'firebase/storage';
+import { Ionicons } from '@expo/vector-icons';
+
 
 const ReportDetailsScreen = () => {
   const route = useRoute();
@@ -44,6 +46,37 @@ const ReportDetailsScreen = () => {
     fetchReportData();
   }, [reportId]);
 
+  const handleEditReport = () => {
+    // Navigate to the EditReport screen and pass the reportId
+    navigation.navigate('EditReport', { reportId });
+  };
+
+  const handleDeleteReport = async () => {
+    Alert.alert(
+      'Delete Report',
+      'Are you sure you want to delete this report?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Delete', style: 'destructive', onPress: performDeleteReport, textStyle: { color: 'red' } },
+      ]
+    );
+  };
+
+  const performDeleteReport = async () => {
+    try {
+      // Delete the report from Firestore
+      const reportDocRef = firestore.doc(
+        `users/${auth.currentUser?.uid}/reports/${reportId}`
+      );
+      await reportDocRef.delete();
+
+      // Navigate back to the ViewReportScreen after successful deletion
+      navigation.goBack();
+    } catch (error) {
+      console.error('Error deleting report:', error);
+    }
+  };
+
   if (!reportData) {
     // Render a loading indicator or an empty state while fetching the data
     return (
@@ -52,6 +85,7 @@ const ReportDetailsScreen = () => {
       </View>
     );
   }
+
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -96,6 +130,16 @@ const ReportDetailsScreen = () => {
           <Text style={styles.value}>{reportData.followUpDate.toDate().toDateString()}</Text>
         </View>
       )}
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity style={styles.editButton} onPress={handleEditReport}>
+          <Ionicons name="pencil" size={24} color="white" />
+          <Text style={styles.buttonText}>Edit      </Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.deleteButton} onPress={handleDeleteReport}>
+          <Ionicons name="trash" size={24} color="white" />
+          <Text style={styles.buttonText}>Delete   </Text>
+        </TouchableOpacity>
+      </View>
     </ScrollView>
   );
 };
@@ -128,6 +172,32 @@ const styles = StyleSheet.create({
     resizeMode: 'cover',
     marginBottom: 20,
   },
+    // Edit and Delete Button Styles
+    buttonContainer: {
+      flexDirection: 'row',
+      justifyContent: 'space-around',
+      marginTop: 20,
+    },
+    editButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: '#009387',
+      borderRadius: 5,
+      padding: 10,
+    },
+    deleteButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: '#FF5733', // Use a different color for the delete button
+      borderRadius: 5,
+      padding: 10,
+    },
+    buttonText: {
+      color: 'white',
+      fontSize: 16,
+      fontWeight: 'bold',
+      marginLeft: 5,
+    },
 });
 
 export default ReportDetailsScreen;
