@@ -55,6 +55,8 @@ const ReportDetailsScreen = () => {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.heading}>Report Details</Text>
+      <Text style={styles.label}>Time:</Text>
+      <Text style={styles.value}>{reportData.date.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</Text>
       <Text style={styles.label}>Date:</Text>
       <Text style={styles.value}>{reportData.date.toDate().toDateString()}</Text>
       <Text style={styles.label}>Location:</Text>
