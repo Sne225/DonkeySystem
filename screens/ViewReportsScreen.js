@@ -1,21 +1,36 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, StyleSheet, Alert, ActivityIndicator } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { collection, query, where, getDocs, deleteDoc, doc } from 'firebase/firestore';
 import { auth, firestore } from '../firebase';
 import { Ionicons } from '@expo/vector-icons';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import Menu, { MenuItem } from 'react-native-popup-menu';
 
 
 
 
 const ViewReportScreen = ( {reportId}) => {
   const [reports, setReports] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const navigation = useNavigation();
 
   useEffect(() => {
     // Fetch the reports from Firestore
+    // const currentUser = auth.currentUser;
+    // const userId = currentUser ? currentUser.uid : null;
+
+    // if (userId) {
+    //   const userReportsRef = collection(firestore, 'users', userId, 'reports');
+    //   const q = query(userReportsRef);
+
+    //   const fetchReports = async () => {
+    //     const querySnapshot = await getDocs(q);
+    //     const fetchedReports = querySnapshot.docs.map((doc) => ({
+    //       id: doc.id,
+    //       ...doc.data(),
+    //     }));
+    //     setReports(fetchedReports);
+    //   };
     const currentUser = auth.currentUser;
     const userId = currentUser ? currentUser.uid : null;
 
@@ -24,12 +39,18 @@ const ViewReportScreen = ( {reportId}) => {
       const q = query(userReportsRef);
 
       const fetchReports = async () => {
-        const querySnapshot = await getDocs(q);
-        const fetchedReports = querySnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        setReports(fetchedReports);
+        try {
+          const querySnapshot = await getDocs(q);
+          const fetchedReports = querySnapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }));
+          setReports(fetchedReports);
+        } catch (error) {
+          console.error('Error fetching reports:', error);
+        } finally {
+          setIsLoading(false); // Set loading to false after fetching data
+        }
       };
 
       fetchReports();
@@ -40,6 +61,14 @@ const ViewReportScreen = ( {reportId}) => {
     // Navigate to a screen to view the details of the report with the given ID
     navigation.navigate('ReportDetails', { reportId });
   };
+
+  if (isLoading) {
+    return (
+      <View style={styles.container}>
+        <ActivityIndicator size="large" color="#009387" />
+      </View>
+    );
+  }
 
   const handleDeleteReport = async (reportId) => {
     // Show an alert to confirm the deletion

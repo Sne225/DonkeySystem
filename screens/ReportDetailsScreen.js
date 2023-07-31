@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import { useRoute } from '@react-navigation/native';
 import { firestore, auth } from '../firebase';
 import {collection, doc, getDoc} from 'firebase/firestore'
@@ -11,6 +11,7 @@ const ReportDetailsScreen = () => {
   const route = useRoute();
   const reportId = route.params?.reportId;
   const [reportData, setReportData] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     // Fetch the report details from Firestore
@@ -40,11 +41,21 @@ const ReportDetailsScreen = () => {
           }
         } catch (error) {
           console.error('Error fetching report data:', error);
+        } finally {
+          setIsLoading(false);
         }
       };
 
     fetchReportData();
   }, [reportId]);
+
+  if (isLoading) {
+    return (
+      <View style={styles.container}>
+        <ActivityIndicator size="large" color="#009387" />
+      </View>
+    );
+  }
 
   const handleEditReport = () => {
     // Navigate to the EditReport screen and pass the reportId
