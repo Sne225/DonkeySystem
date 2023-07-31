@@ -49,7 +49,13 @@ const HomeScreen = () => {
     <View style={styles.container}>
       <Text style={styles.greetText}>Hi, <Text style={styles.nameText}>{userName ? userName : 'Loading...'}!</Text></Text>
       <TouchableOpacity onPress={handleCreateReport} style={styles.button}>
-      <Text style={styles.buttonText}>Create a report</Text>
+      <Text style={styles.buttonText}>Create A Report</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+      onPress={() => {}}x
+        style={styles.button }
+      >
+        <Text style={styles.buttonText}>View Reports</Text>
       </TouchableOpacity>
       <TouchableOpacity
       onPress={handleSignOut}

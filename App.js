@@ -24,9 +24,13 @@ export default function App() {
           },
         }} >
         <Stack.Screen options={{headerShown: false}} name="Login" component={LoginScreen} />
-        <Stack.Screen name="CreateAccount" component={CreateAccount} />
-        <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="CreateReport" component={CreateReportScreen} />
+        <Stack.Screen name="CreateAccount" component={CreateAccount} options={{
+          title: 'Create Account',
+        }}/>
+        <Stack.Screen name="Home" component={HomeScreen}  options={{title: 'Home', headerLeft: null,}}/>
+        <Stack.Screen name="CreateReport" component={CreateReportScreen} options={{
+          title: 'Create Report', headerLeft: null,
+        }}/>
       </Stack.Navigator>
     </NavigationContainer>
   );
