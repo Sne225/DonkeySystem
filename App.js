@@ -19,17 +19,18 @@ export default function App() {
       <Stack.Navigator screenOptions={{
           headerStyle: {
             backgroundColor: '#009387',
-          },
+          }, 
           headerTintColor: '#fff',
           headerTitleStyle: {
             fontWeight: 'bold',
+            headerShown: false,
           },
         }} >
         <Stack.Screen name="Onboarding" component={OnboardingScreen} options={{headerShown: false}} />
         <Stack.Screen options={{headerShown: false}} name="Login" component={LoginScreen} />
-        <Stack.Screen name="CreateAccount" component={CreateAccount} options={{title: 'Create Account', }}/>
-        <Stack.Screen name="Home" component={HomeScreen}  options={{title: 'Home', headerLeft: null,}}/>
-        <Stack.Screen name="CreateReport" component={CreateReportScreen} options={{ title: 'Create Report', headerLeft: null, }}/>
+        <Stack.Screen name="CreateAccount" component={CreateAccount} options={{title: 'Create Account',}}/>
+        <Stack.Screen name="Home" component={HomeScreen}  options={{title: 'Home', headerShown: false, headerBackTitleVisible: false, }}/>
+        <Stack.Screen name="CreateReport" component={CreateReportScreen} options={{ headerLeft: null, title: 'Create Report',  }}/>
         <Stack.Screen name="ViewReports" component={ViewReportsScreen} options={{title: 'View Reports',}}/>
         <Stack.Screen name="ReportDetails" component={ReportDetailsScreen} options={{title: 'Report Details',}}/>
         

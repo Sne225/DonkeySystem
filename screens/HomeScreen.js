@@ -2,7 +2,7 @@ import { StyleSheet, Text, TouchableOpacity, View, ActivityIndicator } from 'rea
 import React, { useEffect, useState } from 'react';
 import { auth, firestore } from '../firebase';
 import { collection, doc, getDoc, getDocs } from 'firebase/firestore';
-import { useNavigation } from '@react-navigation/core';
+import { useNavigation, useIsFocused } from '@react-navigation/core';
 import { Feather } from '@expo/vector-icons'; // Import Feather icons from Expo
 
 const HomeScreen = () => {
@@ -10,6 +10,8 @@ const HomeScreen = () => {
   const [userName, setUserName] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [reportCount, setReportCount] = useState(0);
+  const isFocused = useIsFocused(); // Get the focused state of the screen
+
 
   useEffect(() => {
     const getUserData = async () => {
@@ -22,7 +24,7 @@ const HomeScreen = () => {
           const userData = userSnapshot.data();
           const name = userData.name;
           setUserName(name);
-          
+
           // Fetch the "reports" collection under the user's document
           const reportsCollectionRef = collection(userRef, 'reports');
           const reportsSnapshot = await getDocs(reportsCollectionRef);
@@ -37,7 +39,7 @@ const HomeScreen = () => {
     };
 
     getUserData();
-  }, []);
+  }, [isFocused]); // Update when the screen is focused
 
   const handleSignOut = () => {
     auth
@@ -49,7 +51,13 @@ const HomeScreen = () => {
   };
 
   const handleCreateReport = () => {
-    navigation.navigate('CreateReport');
+    navigation.navigate('CreateReport', {
+      // Pass a callback function to be executed when the report is successfully submitted
+      onReportSubmitted: () => {
+        // When the report is successfully submitted, navigate back to HomeScreen
+        navigation.goBack();
+      },
+    });
   };
 
   const handleViewReports = () => {
