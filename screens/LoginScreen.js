@@ -45,23 +45,23 @@ const LoginScreen = () => {
   
       // Sign in the user using Firebase Authentication
       if (email.trim() === '') {
-        Alert.alert('Error Login', 'Please enter your email address.');
+        Alert.alert('Error Login', 'Please enter your email address 📧');
         return;
       }
 
       if (!isValidEmail(email)) {
-        Alert.alert('Error Login', 'Please enter a valid email address');
+        Alert.alert('Error Login', 'Please enter a valid email address 🙂');
         return;
       }
   
       if (password.trim() === '') {
-        Alert.alert('Error Login', 'Please enter a password');
+        Alert.alert('Error Login', 'Please enter a password 🔑');
         return;
       }
 
       if (password.length < 6)
       {
-        Alert.alert('Error Login', 'Password short. Please enter at leeast characters!');
+        Alert.alert('Error Login', 'Password short. Please enter at least characters! 🔢');
         return;
       }
 
@@ -82,15 +82,15 @@ const LoginScreen = () => {
       
       // Handle sign-in error, such as displaying an error message
       if (error.code === 'auth/invalid-email') {
-        Alert.alert('Error Login', 'Your email is invalid. Please try again.');
+        Alert.alert('Error Login', 'Your email is invalid. Please try again. ❌');
       } else if (error.code === 'auth/wrong-password') {
-        Alert.alert('Error Login', 'Incorrect Password. Please try again.');
+        Alert.alert('Error Login', 'Incorrect Password. Please try again. ❌');
       } else if (error.code === 'auth/operation-not-allowed') {
         Alert.alert('Error Login', 'Email/password sign-in is not enabled');
       }  else if (error.code === 'auth/user-not-found') {
-        Alert.alert('Error Login', 'This user does not exist. Please try again.');
+        Alert.alert('Error Login', 'This user does not exist. Please try again. 💀');
       } else if (error.code === 'auth/too-many-requests') {
-        Alert.alert('Account Temporary Locked', 'Access to this account has been temporarily disabled due to many failed login attempts. You can immediately restore it by resetting your password or you can try again later.');
+        Alert.alert('Account Temporary Locked', 'Access to this account has been temporarily disabled due to many failed login attempts. You can immediately restore it by resetting your password or you can try again later. 😔');
       } else {
         Alert.alert('Error', 'Login failed');
       }
@@ -121,7 +121,7 @@ const LoginScreen = () => {
     <View style={styles.container}>
         <Animated.View style={[styles.logoContainer, logoStyle]}>
         <Image
-          source={require('./assets/iconn.png')}
+          source={require('../assets/iconn.png')}
           style={styles.logo}
         />
       </Animated.View>
