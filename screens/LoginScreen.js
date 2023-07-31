@@ -121,7 +121,7 @@ const LoginScreen = () => {
     <View style={styles.container}>
         <Animated.View style={[styles.logoContainer, logoStyle]}>
         <Image
-          source={require('./iconn.png')}
+          source={require('./assets/iconn.png')}
           style={styles.logo}
         />
       </Animated.View>
