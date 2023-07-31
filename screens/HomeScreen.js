@@ -20,6 +20,9 @@ const HomeScreen = () => {
     const handleCreateReport = () => {
       navigation.navigate('CreateReport');
     };
+    const handleViewReports = () => {
+      navigation.navigate('ViewReports');
+    };
     
     const [userName, setUserName] = useState('');
     
@@ -52,7 +55,7 @@ const HomeScreen = () => {
       <Text style={styles.buttonText}>Create A Report</Text>
       </TouchableOpacity>
       <TouchableOpacity
-      onPress={() => {}}x
+      onPress={handleViewReports}
         style={styles.button }
       >
         <Text style={styles.buttonText}>View Reports</Text>
