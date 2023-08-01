@@ -51,13 +51,7 @@ const HomeScreen = () => {
   };
 
   const handleCreateReport = () => {
-    navigation.navigate('CreateReport', {
-      // Pass a callback function to be executed when the report is successfully submitted
-      onReportSubmitted: () => {
-        // When the report is successfully submitted, navigate back to HomeScreen
-        navigation.goBack();
-      },
-    });
+    navigation.navigate('CreateReport');
   };
 
   const handleViewReports = () => {
