@@ -2,7 +2,7 @@ import { StyleSheet, Text, TouchableOpacity, View, ActivityIndicator } from 'rea
 import React, { useEffect, useState } from 'react';
 import { auth, firestore } from '../firebase';
 import { collection, doc, getDoc, getDocs } from 'firebase/firestore';
-import { useNavigation } from '@react-navigation/core';
+import { useNavigation, useIsFocused } from '@react-navigation/core';
 import { Feather } from '@expo/vector-icons'; // Import Feather icons from Expo
 
 const HomeScreen = () => {
@@ -10,6 +10,8 @@ const HomeScreen = () => {
   const [userName, setUserName] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [reportCount, setReportCount] = useState(0);
+  const isFocused = useIsFocused(); // Get the focused state of the screen
+
 
   useEffect(() => {
     const getUserData = async () => {
@@ -22,7 +24,7 @@ const HomeScreen = () => {
           const userData = userSnapshot.data();
           const name = userData.name;
           setUserName(name);
-          
+
           // Fetch the "reports" collection under the user's document
           const reportsCollectionRef = collection(userRef, 'reports');
           const reportsSnapshot = await getDocs(reportsCollectionRef);
@@ -37,7 +39,7 @@ const HomeScreen = () => {
     };
 
     getUserData();
-  }, []);
+  }, [isFocused]); // Update when the screen is focused
 
   const handleSignOut = () => {
     auth
@@ -76,6 +78,10 @@ const HomeScreen = () => {
       <TouchableOpacity onPress={handleViewReports} style={styles.button}>
         <Feather name="list" size={24} color="white" style={styles.buttonIcon} />
         <Text style={styles.buttonText}>View Reports ({reportCount})</Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={() => {}} style={styles.button}>
+        <Feather name="award" size={24} color="white" style={styles.buttonIcon} />
+        <Text style={styles.buttonText}>Leaderboard</Text>
       </TouchableOpacity>
       <TouchableOpacity onPress={handleSignOut} style={styles.button}>
         <Feather name="log-out" size={24} color="white" style={styles.buttonIcon} />

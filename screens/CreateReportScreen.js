@@ -43,7 +43,6 @@ const CreateReportScreen = () => {
   const [followUp, setFollowUp] = useState(false);
   const [followUpDate, setFollowUpDate] = useState(null);
   const [isSubmitSuccess, setIsSubmitSuccess] = useState(false);
-  const [isRedirecting, setIsRedirecting] = useState(false);
   const navigation = useNavigation();
 
   const handleDateChange = (event, selectedDate) => {
@@ -128,9 +127,7 @@ const CreateReportScreen = () => {
     setIsLoading(false);
     return;
   }
-
-
-
+  
     let photoUrl = null;
     if (photo) {
       const photoRef = ref(storage, `photos/${Date.now()}`);
