@@ -85,6 +85,10 @@ const HomeScreen = () => {
         <Feather name="list" size={24} color="white" style={styles.buttonIcon} />
         <Text style={styles.buttonText}>View Reports ({reportCount})</Text>
       </TouchableOpacity>
+      <TouchableOpacity onPress={() => {}} style={styles.button}>
+        <Feather name="award" size={24} color="white" style={styles.buttonIcon} />
+        <Text style={styles.buttonText}>Leaderboard</Text>
+      </TouchableOpacity>
       <TouchableOpacity onPress={handleSignOut} style={styles.button}>
         <Feather name="log-out" size={24} color="white" style={styles.buttonIcon} />
         <Text style={styles.buttonText}>Sign Out</Text>
