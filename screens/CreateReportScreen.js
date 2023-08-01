@@ -8,7 +8,7 @@ import {
   Button,
   TouchableOpacity,
   Image,
-  Alert,
+  Alert, ActivityIndicator,StyleSheet,
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Ionicons } from '@expo/vector-icons';
@@ -16,9 +16,14 @@ import * as ImagePicker from 'expo-image-picker';
 import { auth, firestore } from '../firebase';
 import { collection, doc, setDoc, getDoc, Timestamp } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { useNavigation } from '@react-navigation/native';
+import Modal from 'react-native-modal';
+import Icon from 'react-native-vector-icons/FontAwesome';
+
 
 
 const CreateReportScreen = () => {
+  const [isLoading, setIsLoading] = useState(false);
   const [date, setDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [ownerName, setOwnerName] = useState('');
@@ -37,6 +42,8 @@ const CreateReportScreen = () => {
   const [contactVets, setContactVets] = useState(false);
   const [followUp, setFollowUp] = useState(false);
   const [followUpDate, setFollowUpDate] = useState(null);
+  const [isSubmitSuccess, setIsSubmitSuccess] = useState(false);
+  const navigation = useNavigation();
 
   const handleDateChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
@@ -63,8 +70,13 @@ const CreateReportScreen = () => {
       });
 
       if (!result.canceled) {
-        setPhoto(result.uri);
+        // setPhoto(result.uri);
+        if (result.assets && result.assets.length > 0) {
+          // The selected image is now accessed through the "assets" array
+          const selectedAsset = result.assets[0];
+          setPhoto(selectedAsset.uri);
       }
+    }
     } catch (error) {
       console.log('Error picking image:', error);
     }
@@ -85,85 +97,107 @@ const CreateReportScreen = () => {
     }
   
     const reportCollectionRef = collection(userDocRef, 'reports');
-    const reportCollectionSnapshot = await getDoc(reportCollectionRef);
-  
-    if (!reportCollectionSnapshot.exists()) {
-      await setDoc(reportCollectionRef, {});
-    }
+    // You don't need to check if the collection exists because it will be created automatically when you add a document to it.
+    return reportCollectionRef;
   };
 
   const handleSubmit = async () => {
     // Save the report data to Firestore
-    if (!date || !location || !ownerName) {
-        Alert.alert('Missing Fields', 'Please fill in all required fields.');
-        return;
-      }
 
-      let photoUrl = null;
-      if (photo) {
-        const photoRef = ref(storage, `photos/${Date.now()}`);
-        await uploadBytes(photoRef, photo);
-        photoUrl = await getDownloadURL(photoRef);
-      }
+    setIsLoading(true);
 
+    // if (!date || !location || !ownerName) {
+    //   Alert.alert('Missing Fields', 'Please fill in all required fields.');
+    //   setIsLoading(false);
+    //   return;
+    // }
+
+
+  // Validate the required fields and store the missing field names in an array
+    const missingFields = [];
+  if (!date) missingFields.push('Date');
+  if (!location) missingFields.push('Location');
+  if (!ownerName) missingFields.push('Name of Donkey Owner');
+
+  // Check if there are any missing fields
+  if (missingFields.length > 0) {
+    // Construct the error message with the missing field names
+    const errorMessage = `Please fill in the following required fields: ${missingFields.join(', ')}`;
+    Alert.alert('Missing Fields', errorMessage);
+    setIsLoading(false);
+    return;
+  }
+  
+    let photoUrl = null;
+    if (photo) {
+      const photoRef = ref(storage, `photos/${Date.now()}`);
+      await uploadBytes(photoRef, photo);
+      photoUrl = await getDownloadURL(photoRef);
+    }
+  
     const reportData = {
-        date: Timestamp.fromDate(new Date(date)), // Convert date to Firestore timestamp
-        ownerName,
-        location,
-        donkeyCount: Number(donkeyCount), // Convert to a number if needed
-        maleAdultCount: Number(maleAdultCount),
-        maleCastratedCount: Number(maleCastratedCount),
-        femaleAdultCount: Number(femaleAdultCount),
-        maleFoalCount: Number(maleFoalCount),
-        femaleFoalCount: Number(femaleFoalCount),
-        poorHealth,
-        photo: photoUrl,
-        ownerReports,
-        observations,
-        adviceHelp,
-        contactVets,
-        followUp,
-        followUpDate: followUpDate ? Timestamp.fromDate(new Date(followUpDate)) : null, 
+      date: Timestamp.fromDate(new Date(date)), // Convert date to Firestore timestamp
+      ownerName,
+      location,
+      donkeyCount: Number(donkeyCount), // Convert to a number if needed
+      maleAdultCount: Number(maleAdultCount),
+      maleCastratedCount: Number(maleCastratedCount),
+      femaleAdultCount: Number(femaleAdultCount),
+      maleFoalCount: Number(maleFoalCount),
+      femaleFoalCount: Number(femaleFoalCount),
+      poorHealth,
+      photo: photoUrl,
+      ownerReports,
+      observations,
+      adviceHelp,
+      contactVets,
+      followUp,
+      followUpDate: followUpDate ? Timestamp.fromDate(new Date(followUpDate)) : null,
     };
-
+  
     // Save the report data to Firestore with the current user's ID
     const currentUser = auth.currentUser;
     const userId = currentUser ? currentUser.uid : null;
-
+  
     if (userId) {
-
-     try {
-        await createReportCollection(userId);
-
-        const reportDocRef = doc(firestore, 'users', userId, 'reports');
-        const docRef = await setDoc(reportDocRef, reportData);
-        console.log('Report created with ID:', docRef.id);
-
-      // Reset the form after submitting
-
-
-      setDate(new Date());
-      setOwnerName('');
-      setLocation('');
-      setDonkeyCount(0);
-      setMaleAdultCount(0);
-      setMaleCastratedCount(0);
-      setFemaleAdultCount(0);
-      setMaleFoalCount(0);
-      setFemaleFoalCount(0);
-      setPoorHealth(false);
-      setPhoto(null);
-      setOwnerReports('');
-      setObservations('');
-      setAdviceHelp('');
-      setContactVets(false);
-      setFollowUp(false);
-      setFollowUpDate(null);
-     }  
-     catch (error) {
+      try {
+        const reportCollectionRef = await createReportCollection(userId);
+  
+        // const docRef = await setDoc(doc(reportCollectionRef), reportData);
+        await setDoc(doc(reportCollectionRef), reportData);
+      console.log('Report created successfully.');
+  
+        // Reset the form after submitting
+        setDate(new Date());
+        setOwnerName('');
+        setLocation('');
+        setDonkeyCount(0);
+        setMaleAdultCount(0);
+        setMaleCastratedCount(0);
+        setFemaleAdultCount(0);
+        setMaleFoalCount(0);
+        setFemaleFoalCount(0);
+        setPoorHealth(false);
+        setPhoto(null);
+        setOwnerReports('');
+        setObservations('');
+        setAdviceHelp('');
+        setContactVets(false);
+        setFollowUp(false);
+        setFollowUpDate(null);
+      } catch (error) {
         console.error('Error creating report:', error);
         // Handle any error cases
+      } finally {
+        // isLoading to false when the submission process completes
+        setIsLoading(false);
+        setIsSubmitSuccess(true);
+    setTimeout(() => {
+      setIsSubmitSuccess(false);
+      navigation.navigate("Home");
+    }, 2500);
       }
+      
     }
   };
 
@@ -408,6 +442,31 @@ const CreateReportScreen = () => {
         </View>
       )}
 
+      <Modal isVisible={isSubmitSuccess}>
+        <View
+          style={{
+            backgroundColor: '#009387',
+            padding: 20,
+            borderRadius: 10,
+            alignItems: 'center',
+            flexDirection: 'row',
+          }}
+        >
+          <Icon name="check" size={20} color="white" />
+          <Text style={{ color: 'white', fontSize: 18, fontWeight: 'bold', marginLeft: 30 }}>
+            Report Submitted!
+          </Text>
+        </View>
+      </Modal>
+
+      {/* Render the loading screen when isLoading is true */}
+      {isLoading && (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#009387" />
+          <Text style={styles.loadingText}>Submitting...</Text>
+        </View>
+      )}
+
       <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
         <Ionicons name="rocket" size={24} color="white" />
         <Text style={styles.submitButtonText}>Submit</Text>
@@ -484,6 +543,18 @@ const styles = {
     fontWeight: 'bold',
     color: 'white',
   },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 100, // Adjust this value as needed
+  },
+  successMessageText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
   submitButton: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -500,6 +571,7 @@ const styles = {
     marginLeft: 5,
     color: 'white',
   },
+  
 };
 
 export default CreateReportScreen;

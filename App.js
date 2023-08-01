@@ -6,6 +6,9 @@ import LoginScreen from './screens/LoginScreen';
 import HomeScreen from './screens/HomeScreen';
 import CreateAccount from './screens/CreateAccountScreen';
 import CreateReportScreen from './screens/CreateReportScreen';
+import ViewReportsScreen from './screens/ViewReportsScreen';
+import ReportDetailsScreen from './screens/ReportDetailsScreen';
+import OnboardingScreen from './screens/OnboardingScreen';
 
 
 const Stack = createNativeStackNavigator();
@@ -16,16 +19,21 @@ export default function App() {
       <Stack.Navigator screenOptions={{
           headerStyle: {
             backgroundColor: '#009387',
-          },
+          }, 
           headerTintColor: '#fff',
           headerTitleStyle: {
             fontWeight: 'bold',
+            headerShown: false,
           },
         }} >
+        <Stack.Screen name="Onboarding" component={OnboardingScreen} options={{headerShown: false}} />
         <Stack.Screen options={{headerShown: false}} name="Login" component={LoginScreen} />
-        <Stack.Screen name="CreateAccount" component={CreateAccount} />
-        <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="CreateReport" component={CreateReportScreen} />
+        <Stack.Screen name="CreateAccount" component={CreateAccount} options={{title: 'Create Account',}}/>
+        <Stack.Screen name="Home" component={HomeScreen}  options={{title: 'Home', headerShown: false, }}/>
+        <Stack.Screen name="CreateReport" component={CreateReportScreen} options={{ headerLeft: null, title: 'Create Report',  }}/>
+        <Stack.Screen name="ViewReports" component={ViewReportsScreen} options={{title: 'View Reports',}}/>
+        <Stack.Screen name="ReportDetails" component={ReportDetailsScreen} options={{title: 'Report Details',}}/>
+        
       </Stack.Navigator>
     </NavigationContainer>
   );

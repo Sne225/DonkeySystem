@@ -1,6 +1,6 @@
 # DonkeySystem
 
-This system is for the Donkey Care workers, who are part of the Bahanwana Donkey Friends project, which focuses its efforts on holistically improving the welfare of donkeys and the well-being of people in rural communities.
+This system is for the Donkey Care workers, who are part of the Bahanwana Donkey Friends project, which focuses its efforts on holistically improving the welfare of donkeys and the well-being of people in rural communities. Great things to be done.
 
 Inspiration, [here](https://dribbble.com/shots/16108018-Gamification-education-app/attachments/7959394?mode=media) or [here](https://dribbble.com/tags/gamification%20mobile%20app)
 
