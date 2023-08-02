@@ -207,6 +207,7 @@ const styles = StyleSheet.create({
   navButtonText: {
     color: 'white',
     marginTop: 5,
+    
   }
 });
 
