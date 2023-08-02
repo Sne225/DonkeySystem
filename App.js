@@ -26,6 +26,7 @@ export default function App() {
             headerShown: false,
           },
         }} >
+        {/* <Stack.Screen name="Home" component={HomeScreen}  options={{title: 'Home', headerShown: false, }}/> */}
         <Stack.Screen name="Onboarding" component={OnboardingScreen} options={{headerShown: false}} />
         <Stack.Screen options={{headerShown: false}} name="Login" component={LoginScreen} />
         <Stack.Screen name="CreateAccount" component={CreateAccount} options={{title: 'Create Account',}}/>
