@@ -5,6 +5,7 @@ import { collection, doc, getDoc, getDocs } from 'firebase/firestore';
 import { useNavigation, useIsFocused } from '@react-navigation/core';
 import { Feather } from '@expo/vector-icons';
 
+
 const HomeScreen = () => {
   const navigation = useNavigation();
   const [userName, setUserName] = useState('');
@@ -57,6 +58,10 @@ const HomeScreen = () => {
     navigation.navigate('ViewReports');
   };
 
+  const handleSettings = () => {
+    navigation.navigate('Settings');
+  }
+
   if (isLoading) {
     return (
       <View style={styles.container}>
@@ -77,7 +82,7 @@ const HomeScreen = () => {
 
       <View style={styles.reportsCard}>
         <Text style={styles.reportsCount}>{reportCount}</Text>
-        <Text style={styles.reportsLabel}>Reports</Text>
+        <Text style={styles.reportsLabel}>Reports Completed</Text>
       </View>
 
       <TouchableOpacity onPress={handleCreateReport} style={styles.actionButton}>
@@ -114,7 +119,7 @@ const HomeScreen = () => {
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.navButton}
-          onPress={() => {}}
+          onPress={handleSettings}
         >
           <Feather name="settings" size={24} color='white' />
           <Text style={styles.navButtonText}>Settings</Text>
@@ -198,7 +203,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     justifyContent: 'space-around',
     alignItems: 'center', // Change the background color to match the primary color\
-    marginBottom: 10,
+    marginBottom: 20,
   },
   navButton: {
     alignItems: 'center',
