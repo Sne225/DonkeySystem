@@ -12,7 +12,7 @@ const slides = [
     icon: 'md-browsers',
   },
   {
-    title: 'Easy Reporting',
+    title: 'Easy Reporting ',
     description: 'Reporting donkey sightings has never been easier!',
     icon: 'md-checkmark-circle-outline',
   },
