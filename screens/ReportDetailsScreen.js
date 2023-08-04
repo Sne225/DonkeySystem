@@ -2,16 +2,26 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import { useRoute } from '@react-navigation/native';
 import { firestore, auth } from '../firebase';
-import {collection, doc, getDoc} from 'firebase/firestore'
+import {collection, doc, getDoc, deleteDoc} from 'firebase/firestore'
 import { getStorage, ref, getDownloadURL } from 'firebase/storage';
 import { Ionicons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
+import Modal from 'react-native-modal';
+import Icon from 'react-native-vector-icons/FontAwesome';
+
+
 
 
 const ReportDetailsScreen = () => {
+
+  const navigation = useNavigation();
+
   const route = useRoute();
   const reportId = route.params?.reportId;
   const [reportData, setReportData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+
 
   useEffect(() => {
     // Fetch the report details from Firestore
@@ -68,7 +78,12 @@ const ReportDetailsScreen = () => {
       'Are you sure you want to delete this report?',
       [
         { text: 'Cancel', style: 'cancel' },
-        { text: 'Delete', style: 'destructive', onPress: performDeleteReport, textStyle: { color: 'red' } },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: performDeleteReport,
+          textStyle: { color: 'red' },
+        },
       ]
     );
   };
@@ -76,13 +91,25 @@ const ReportDetailsScreen = () => {
   const performDeleteReport = async () => {
     try {
       // Delete the report from Firestore
-      const reportDocRef = firestore.doc(
-        `users/${auth.currentUser?.uid}/reports/${reportId}`
-      );
-      await reportDocRef.delete();
+      const currentUser = auth.currentUser;
+      if (!currentUser) {
+        console.error('User not authenticated.');
+        return;
+      }
+  
+      const userId = currentUser.uid;
+      const reportDocRef = doc(firestore, `users/${userId}/reports`, reportId);
+  
+      // Delete the report from Firestore
+      await deleteDoc(reportDocRef);
 
       // Navigate back to the ViewReportScreen after successful deletion
-      navigation.goBack();
+      
+      setShowSuccessModal(true);
+    setTimeout(() => {
+      setShowSuccessModal(false);
+      navigation.replace("Home");
+    }, 2500);
     } catch (error) {
       console.error('Error deleting report:', error);
     }
@@ -150,6 +177,23 @@ const ReportDetailsScreen = () => {
           <Ionicons name="trash" size={24} color="white" />
           <Text style={styles.buttonText}>Delete   </Text>
         </TouchableOpacity>
+         {/* Success Modal*/}
+      <Modal isVisible={showSuccessModal}>
+        <View
+          style={{
+            backgroundColor: '#009387',
+            padding: 20,
+            borderRadius: 10,
+            alignItems: 'center',
+            flexDirection: 'row',
+          }}
+        >
+          <Icon name="check" size={20} color="white" />
+          <Text style={{ color: 'white', fontSize: 18, fontWeight: 'bold', marginLeft: 25 }}>
+          Report Deleted Successfully!
+          </Text>
+        </View>
+      </Modal>
       </View>
     </ScrollView>
   );

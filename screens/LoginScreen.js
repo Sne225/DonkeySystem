@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Alert} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { FontAwesome } from '@expo/vector-icons';
+import { Feather } from '@expo/vector-icons'; // Assuming you have the vector icons library installed
 import Modal from 'react-native-modal';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import Animated, { useSharedValue, useAnimatedStyle, withTiming, Easing, interpolate, Extrapolate,} from 'react-native-reanimated';
-// import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 import {auth } from '../firebase';
+
+const facebookIcon = require('../assets/facebook.png');
+const googleIcon = require('../assets/google.png');
+
 
 const LoginScreen = () => {
 
@@ -17,135 +19,129 @@ const LoginScreen = () => {
   const [password, setPassword] = useState('');  
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [error, setError] = useState(''); 
-
-  const logoScale = useSharedValue(0);
-
-  useEffect(() => {
-    logoScale.value = withTiming(1, {
-      duration: 4000,
-      easing: Easing.out(Easing.exp),
-    });
-  }, []);
-
-  // useEffect(() => {
-  //   // const auth = getAuth();
-
-  //   const unsubscribe = auth.onAuthStateChanged(user => {
-  //     if (user) {
-  //       navigation.replace("Home")
-  //     }
-  //   })
-
-  //   return unsubscribe
-  // }, [])
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSignIn = async () => {
+    {
+     // const auth = getAuth();
+ 
+     // Sign in the user using Firebase Authentication
+     if (email.trim() === '') {
+       Alert.alert('Error Login', 'Please enter your email address 📧');
+       return;
+     }
+
+     if (!isValidEmail(email)) {
+       Alert.alert('Error Login', 'Please enter a valid email address 🙂');
+       return;
+     }
+ 
+     if (password.trim() === '') {
+       Alert.alert('Error Login', 'Please enter a password 🔑');
+       return;
+     }
+
+     if (password.length < 6)
      {
-      // const auth = getAuth();
-  
-      // Sign in the user using Firebase Authentication
-      if (email.trim() === '') {
-        Alert.alert('Error Login', 'Please enter your email address 📧');
-        return;
-      }
+       Alert.alert('Error Login', 'Password short. Please enter at least characters! 🔢');
+       return;
+     }
 
-      if (!isValidEmail(email)) {
-        Alert.alert('Error Login', 'Please enter a valid email address 🙂');
-        return;
-      }
-  
-      if (password.trim() === '') {
-        Alert.alert('Error Login', 'Please enter a password 🔑');
-        return;
-      }
+     await signInWithEmailAndPassword(auth, email, password)
+     .then(userCredentials => {
+       const user = userCredentials.user;
 
-      if (password.length < 6)
-      {
-        Alert.alert('Error Login', 'Password short. Please enter at least characters! 🔢');
-        return;
-      }
+       setShowSuccessModal(true);
+   setTimeout(() => {
+     setShowSuccessModal(false);
+     navigation.replace("Home");
+   }, 2500);
+       console.log('Logged in with:', user.email);
+   })
+     // Navigate to the next screen
+     // navigate('NextScreen');
+   .catch(error => {
+     
+     // Handle sign-in error, such as displaying an error message
+     if (error.code === 'auth/invalid-email') {
+       Alert.alert('Error Login', 'Your email is invalid. Please try again. ❌');
+     } else if (error.code === 'auth/wrong-password') {
+       Alert.alert('Error Login', 'Incorrect Password. Please try again. ❌');
+     } else if (error.code === 'auth/operation-not-allowed') {
+       Alert.alert('Error Login', 'Email/password sign-in is not enabled');
+     }  else if (error.code === 'auth/user-not-found') {
+       Alert.alert('Error Login', 'This user does not exist. Please try again. 💀');
+     } else if (error.code === 'auth/too-many-requests') {
+       Alert.alert('Account Temporary Locked', 'Access to this account has been temporarily disabled due to many failed login attempts. You can immediately restore it by resetting your password or you can try again later. 😔');
+     } else {
+       Alert.alert('Error', 'Login failed');
+     }
+     console.log(error);
+   });
+ }};
 
-      await signInWithEmailAndPassword(auth, email, password)
-      .then(userCredentials => {
-        const user = userCredentials.user;
-
-        setShowSuccessModal(true);
-    setTimeout(() => {
-      setShowSuccessModal(false);
-      navigation.replace("Home");
-    }, 2500);
-        console.log('Logged in with:', user.email);
-    })
-      // Navigate to the next screen
-      // navigate('NextScreen');
-    .catch(error => {
-      
-      // Handle sign-in error, such as displaying an error message
-      if (error.code === 'auth/invalid-email') {
-        Alert.alert('Error Login', 'Your email is invalid. Please try again. ❌');
-      } else if (error.code === 'auth/wrong-password') {
-        Alert.alert('Error Login', 'Incorrect Password. Please try again. ❌');
-      } else if (error.code === 'auth/operation-not-allowed') {
-        Alert.alert('Error Login', 'Email/password sign-in is not enabled');
-      }  else if (error.code === 'auth/user-not-found') {
-        Alert.alert('Error Login', 'This user does not exist. Please try again. 💀');
-      } else if (error.code === 'auth/too-many-requests') {
-        Alert.alert('Account Temporary Locked', 'Access to this account has been temporarily disabled due to many failed login attempts. You can immediately restore it by resetting your password or you can try again later. 😔');
-      } else {
-        Alert.alert('Error', 'Login failed');
-      }
-      console.log(error);
-    });
-  }};
-
-  //Validation of email address
-  const isValidEmail = (email) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  };
-  
-  //Navigate to create account screen
-  const handleCreateAccount = () => {
-    navigation.navigate('CreateAccount');
-  };
-
-  //Animation of logo
-  const logoStyle = useAnimatedStyle(() => {
-    const scale = interpolate(logoScale.value, [0, 1], [0.5, 1], Extrapolate.CLAMP);
-    return {
-      transform: [{ scale }],
-    };
-  });
+ //Validation of email address
+ const isValidEmail = (email) => {
+   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+   return emailRegex.test(email);
+ };
+ 
+ //Navigate to create account screen
+ const handleCreateAccount = () => {
+   navigation.navigate('CreateAccount');
+ };
 
   return (
     <View style={styles.container}>
-        <Animated.View style={[styles.logoContainer, logoStyle]}>
-        <Image
-          source={require('../assets/iconn.png')}
-          style={styles.logo}
+      <View style={styles.header}>
+      <Text style={styles.heading}>Hi, Welcome Back👋</Text>
+      <Text style={styles.subHeading}>Hello again. You have been missed!</Text>
+      </View>
+
+      <View style={styles.inputContainer}>
+        <Text style={styles.inputLabel}>Email Address</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Enter your email address"
+          onChangeText={setEmail}
+          autoCapitalize="none"
+          keyboardType="email-address"
         />
-      </Animated.View>
-      
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        onChangeText={setEmail}
-        value={email}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        secureTextEntry
-        onChangeText={setPassword}
-        value={password}
-      />
-      <TouchableOpacity
-        style={[styles.button, { backgroundColor: '#009387' }]}
-        onPress={handleSignIn}
-      >
-        <Text style={styles.buttonText}>Sign in</Text>
+      </View>
+
+      <View style={styles.inputContainer}>
+        <Text style={styles.inputLabel}>Password</Text>
+        <View style={styles.passwordInput}>
+          <TextInput
+            placeholder="Enter your password"
+            secureTextEntry={!showPassword}
+            onChangeText={setPassword}
+          />
+          <TouchableOpacity
+            style={styles.eyeIcon}
+            onPress={() => setShowPassword(!showPassword)}
+          >
+            <Feather
+              name={showPassword ? 'eye-off' : 'eye'}
+              size={24}
+              color="#009783"
+            />
+          </TouchableOpacity>
+        </View>
+        </View>
+
+      <View style={styles.checkboxContainer}>
+        <TouchableOpacity style={styles.checkbox}>
+          {/* Implement your checkbox logic here */}
+        </TouchableOpacity>
+        <Text style={styles.checkboxLabel}>Remember Me</Text>
+        <Text style={styles.forgotPassword}>Forgot Password</Text>
+      </View>
+
+      <TouchableOpacity style={styles.loginButton} onPress={handleSignIn}>
+        <Text style={styles.loginButtonText}>Login</Text>
       </TouchableOpacity>
-      
+
       {/* Success Modal*/}
       <Modal isVisible={showSuccessModal}>
         <View
@@ -163,21 +159,33 @@ const LoginScreen = () => {
           </Text>
         </View>
       </Modal>
-      <TouchableOpacity
-        style={[styles.button, { backgroundColor: 'white' }]}
-        onPress={handleCreateAccount}
-      >
-        <Text style={[styles.buttonText, { color: '#009387' }]}>Create Account</Text>
-      </TouchableOpacity>
-      <View style={styles.socialButtonsContainer}>
-        <TouchableOpacity style={[styles.socialButton, { backgroundColor: '#009387' }]}>
-          <FontAwesome name="facebook" size={20} color="white" />
+
+      <View style={styles.separatorContainer}>
+        <View style={styles.separator} />
+        <Text style={styles.separatorText}>Or Login With</Text>
+        <View style={styles.separator} />
+      </View>
+
+      {/* Other components */}
+      <View style={styles.socialButtonContainer}>
+        <TouchableOpacity style={[styles.socialButton, { borderColor: 'lightgrey' }]} onPress={()=>{}}>
+          <View style={styles.iconContainer}>
+            <Image source={facebookIcon} style={styles.icon} />
+          </View>
+          <Text style={styles.socialButtonText}>Facebook</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={[styles.socialButton, { backgroundColor: '#009387' }]}>
-          <FontAwesome name="google" size={20} color="white" />
+        <TouchableOpacity style={[styles.socialButton, { borderColor: 'lightgrey' }]} onPress={()=>{}}>
+          <View style={styles.iconContainer}>
+            <Image source={googleIcon} style={styles.icon} />
+          </View>
+          <Text style={styles.socialButtonText}>Google</Text>
         </TouchableOpacity>
       </View>
-      <Text style={styles.signInText}>Sign in with a different account</Text>
+
+      <Text style={styles.signUpText}>
+        Don't have an account? 
+        <Text style={styles.signUpLink} onPress={handleCreateAccount}> Sign Up</Text>
+      </Text>
     </View>
   );
 };
@@ -185,55 +193,140 @@ const LoginScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    padding: 20,
     justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    backgroundColor: 'white',
+    backgroundColor: '#FFFFFF',
   },
-  logoContainer: {
-    marginBottom: 30,
+  
+  header: {
+    marginBottom: 20,
+    alignItems: 'center', // Center the content horizontally
   },
-  logo: {
-    width: 150,
-    height: 150,
+  heading: {
+    fontSize: 30,
+    fontWeight: 'bold',
+  },
+  subHeading: {
+    fontSize: 14,
+    color: 'grey',
+    fontWeight: 'bold',
+    marginTop: 5, 
+  },
+  inputContainer: {
+    marginTop: 20,
+  },
+  inputLabel: {
+    fontWeight: 'bold',
   },
   input: {
-    width: '100%',
-    height: 40,
+    marginTop: 5,
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: 'lightgrey',
     borderRadius: 5,
-    marginBottom: 10,
-    paddingHorizontal: 10,
+    padding: 10,
+    fontWeight: 'bold',
   },
-  button: {
-    width: '100%',
-    height: 40,
-    borderRadius: 5,
-    justifyContent: 'center',
+  checkboxContainer: {
+    flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 10,
+    marginTop: 20,
   },
-  buttonText: {
-    color: 'white',
+  checkbox: {
+    width: 20,
+    height: 20,
+    borderRadius: 5,
+    borderWidth: 1,
+    borderColor: 'lightgrey',
+    marginRight: 10,
+  },
+  checkboxLabel: {
+    fontWeight: 'bold',
+  },
+  forgotPassword: {
+    color: 'red',
+    flex: 1,
+    textAlign: 'right',
+    fontWeight: 'bold',
+  },
+  loginButton: {
+    backgroundColor: '#009387',
+    paddingVertical: 15,
+    borderRadius: 10,
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  loginButtonText: {
+    color: '#FFFFFF',
+    fontWeight: 'bold',
     fontSize: 16,
   },
-  socialButtonsContainer: {
+  separatorContainer: {
     flexDirection: 'row',
-    justifyContent: 'center',
-    marginBottom: 10,
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  separator: {
+    flex: 1,
+    height: 1,
+    backgroundColor: 'lightgrey',
+  },
+  separatorText: {
+    marginHorizontal: 10,
+    fontWeight: 'bold',
+    color: 'black',
+  },
+  socialButtonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 20,
   },
   socialButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    justifyContent: 'center',
+    marginTop:10,
+    flexDirection: 'row',
     alignItems: 'center',
-    marginHorizontal: 5,
+    borderWidth: 1,
+    borderRadius: 10,
+    padding: 10,
+    paddingHorizontal: 30,
+    paddingVertical:15,
+
   },
-  signInText: {
-    fontSize: 14,
-    color: '#555',
+  iconContainer: {
+    marginRight: 10,
+  },
+  icon: {
+    width: 24,
+    height: 24,
+    resizeMode: 'contain',
+  },
+  socialButtonText: {
+    fontWeight: 'bold',
+  },
+  signUpText: {
+    textAlign: 'center',
+    justifyContent: "center",
+    fontSize: 16,
+    position: 'relative',
+    top: 100, // Change this value to move the text to a different position from the top
+    left: 0,
+    color: "grey"
+   
+  },
+  signUpLink: {
+    color: '#009387',
+    fontWeight: 'bold',
+  },
+   passwordInput: {
+    flexDirection: 'row',
+    marginTop: 5,
+    borderWidth: 1,
+    borderColor: 'lightgrey',
+    borderRadius: 5,
+    padding: 10,
+    fontWeight: 'bold'
+  },
+  eyeIcon: {
+    marginLeft: 135,
   },
 });
 
