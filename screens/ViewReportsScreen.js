@@ -15,22 +15,6 @@ const ViewReportScreen = ( {reportId}) => {
   const navigation = useNavigation();
 
   useEffect(() => {
-    // Fetch the reports from Firestore
-    // const currentUser = auth.currentUser;
-    // const userId = currentUser ? currentUser.uid : null;
-
-    // if (userId) {
-    //   const userReportsRef = collection(firestore, 'users', userId, 'reports');
-    //   const q = query(userReportsRef);
-
-    //   const fetchReports = async () => {
-    //     const querySnapshot = await getDocs(q);
-    //     const fetchedReports = querySnapshot.docs.map((doc) => ({
-    //       id: doc.id,
-    //       ...doc.data(),
-    //     }));
-    //     setReports(fetchedReports);
-    //   };
     const currentUser = auth.currentUser;
     const userId = currentUser ? currentUser.uid : null;
 
@@ -70,6 +54,41 @@ const ViewReportScreen = ( {reportId}) => {
     );
   }
 
+  // const handleDeleteReport = async (reportId) => {
+  //   // Show an alert to confirm the deletion
+  //   Alert.alert(
+  //     'Confirm Deletion',
+  //     'Are you sure you want to delete this report?',
+  //     [
+  //       {
+  //         text: 'Cancel',
+  //         style: 'cancel',
+  //       },
+  //       {
+  //         text: 'Delete',
+  //         style: 'destructive',
+  //         onPress: async () => {
+  //           try {
+  //             // Delete the report from Firestore
+  //             await deleteDoc(collection(firestore, 'users', auth.currentUser?.uid, 'reports', reportId));
+
+  //             // Remove the deleted report from the local state
+  //             setReports((prevReports) => prevReports.filter((report) => report.id !== reportId));
+
+  //             // Show a success message (optional)
+  //             Alert.alert('Report Deleted', 'The report has been successfully deleted.');
+  //           } catch (error) {
+  //             console.error('Error deleting report:', error);
+  //             // Show an error message (optional)
+  //             Alert.alert('Error', 'An error occurred while deleting the report. Please try again later.');
+  //           }
+  //         },
+  //       },
+  //     ],
+  //     { cancelable: true }
+  //   );
+  // };
+
   const handleDeleteReport = async (reportId) => {
     // Show an alert to confirm the deletion
     Alert.alert(
@@ -86,11 +105,11 @@ const ViewReportScreen = ( {reportId}) => {
           onPress: async () => {
             try {
               // Delete the report from Firestore
-              await deleteDoc(collection(firestore, 'users', auth.currentUser?.uid, 'reports', reportId));
-
+              await deleteDoc(doc(firestore, 'users', auth.currentUser?.uid, 'reports', reportId));
+  
               // Remove the deleted report from the local state
               setReports((prevReports) => prevReports.filter((report) => report.id !== reportId));
-
+  
               // Show a success message (optional)
               Alert.alert('Report Deleted', 'The report has been successfully deleted.');
             } catch (error) {
@@ -104,6 +123,7 @@ const ViewReportScreen = ( {reportId}) => {
       { cancelable: true }
     );
   };
+  
 
   const renderItem = ({ item }) => (
     <TouchableOpacity

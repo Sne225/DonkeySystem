@@ -3,15 +3,16 @@ import React, { useEffect, useState } from 'react';
 import { auth, firestore } from '../firebase';
 import { collection, doc, getDoc, getDocs } from 'firebase/firestore';
 import { useNavigation, useIsFocused } from '@react-navigation/core';
-import { Feather } from '@expo/vector-icons'; // Import Feather icons from Expo
+import { Feather } from '@expo/vector-icons';
+
 
 const HomeScreen = () => {
   const navigation = useNavigation();
   const [userName, setUserName] = useState('');
+  const [userCity, setUserCity] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [reportCount, setReportCount] = useState(0);
-  const isFocused = useIsFocused(); // Get the focused state of the screen
-
+  const isFocused = useIsFocused();
 
   useEffect(() => {
     const getUserData = async () => {
@@ -22,13 +23,12 @@ const HomeScreen = () => {
 
         if (userSnapshot.exists()) {
           const userData = userSnapshot.data();
-          const name = userData.name;
-          setUserName(name);
+          setUserName(userData.name);
+          setUserCity(userData.city);
 
-          // Fetch the "reports" collection under the user's document
           const reportsCollectionRef = collection(userRef, 'reports');
           const reportsSnapshot = await getDocs(reportsCollectionRef);
-          setReportCount(reportsSnapshot.size); // Assuming the user's reports are stored as an array in Firestore
+          setReportCount(reportsSnapshot.size);
         }
 
         setIsLoading(false);
@@ -39,7 +39,7 @@ const HomeScreen = () => {
     };
 
     getUserData();
-  }, [isFocused]); // Update when the screen is focused
+  }, [isFocused]);
 
   const handleSignOut = () => {
     auth
@@ -58,6 +58,10 @@ const HomeScreen = () => {
     navigation.navigate('ViewReports');
   };
 
+  const handleSettings = () => {
+    navigation.navigate('Settings');
+  }
+
   if (isLoading) {
     return (
       <View style={styles.container}>
@@ -68,84 +72,148 @@ const HomeScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.greetText}>
-        Hi, <Text style={styles.nameText}>{userName ? userName : 'Loading...'}!</Text>
-      </Text>
-      <TouchableOpacity onPress={handleCreateReport} style={styles.button}>
-        <Feather name="file-plus" size={24} color="white" style={styles.buttonIcon} />
-        <Text style={styles.buttonText}>Create A Report</Text>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={handleViewReports} style={styles.button}>
-        <Feather name="list" size={24} color="white" style={styles.buttonIcon} />
-        <Text style={styles.buttonText}>View Reports ({reportCount})</Text>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={() => {}} style={styles.button}>
-        <Feather name="award" size={24} color="white" style={styles.buttonIcon} />
-        <Text style={styles.buttonText}>Leaderboard</Text>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={handleSignOut} style={styles.button}>
-        <Feather name="log-out" size={24} color="white" style={styles.buttonIcon} />
-        <Text style={styles.buttonText}>Sign Out</Text>
+      <View style={styles.profileCard}>
+        <View style={styles.profileLogo}>
+          <Feather name="user" size={40} color="#009387" />
+        </View>
+        <Text style={styles.userName}>{userName}</Text>
+        <Text style={styles.userCity}>{userCity}</Text>
+      </View>
+
+      <View style={styles.reportsCard}>
+        <Text style={styles.reportsCount}>{reportCount}</Text>
+        <Text style={styles.reportsLabel}>Reports Completed</Text>
+      </View>
+
+      <TouchableOpacity onPress={handleCreateReport} style={styles.actionButton}>
+        <Feather name="file-plus" size={24} color="white" />
+        <Text style={styles.actionText}>   Create A Report</Text>
       </TouchableOpacity>
 
-      {/* Graphical Summary of Reports */}
-      <View style={styles.summaryContainer}>
-        {/* You can add charts or graphical representations of user's reports data here */}
-        {/* For example, bar charts, pie charts, etc. */}
-        {/* You can use libraries like react-native-svg-charts or others to implement the charts */}
-        {/* For this example, let's display a simple summary text */}
-        <Text style={styles.summaryText}>Total Reports: {reportCount}</Text>
+      <TouchableOpacity onPress={handleViewReports} style={styles.actionButton}>
+        <Feather name="list" size={24} color="white" />
+        <Text style={styles.actionText}>      View Reports</Text>
+      </TouchableOpacity>
+
+      <View style={styles.navigationBar}>
+        <TouchableOpacity
+          style={[styles.navButton, isFocused ? styles.activeNavButton : null]}
+          onPress={() => navigation.navigate('Home')}
+        >
+          <Feather name="home" size={24} color='white' />
+          <Text style={styles.navButtonText}>Home</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.navButton}
+          onPress={() => {}}
+        >
+          <Feather name="award" size={24} color='white' />
+          <Text style={styles.navButtonText}>Leaderboards</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.navButton}
+          onPress={() => {}}
+        >
+          <Feather name="bell" size={24} color='white'/>
+          <Text style={styles.navButtonText}>Notifications</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.navButton}
+          onPress={handleSettings}
+        >
+          <Feather name="settings" size={24} color='white' />
+          <Text style={styles.navButtonText}>Settings</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
 };
-
-export default HomeScreen;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#f0f0f0',
+    padding: 20,
   },
-  button: {
+  profileCard: {
     backgroundColor: '#009387',
-    width: '60%',
-    padding: 15,
-    borderRadius: 10,
+    width: '100%',
+    padding: 28,
+    borderRadius: 20,
     alignItems: 'center',
-    marginTop: 20,
-    flexDirection: 'row', // Added to align the icon and text horizontally
+    marginBottom: 30,
   },
-  buttonText: {
+  profileLogo: {
+    backgroundColor: 'white',
+    padding: 15,
+    borderRadius: 50,
+    marginBottom: 10,
+  },
+  userName: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: 'white',
+    marginBottom: 5,
+  },
+  userCity: {
+    fontSize: 16,
+    color: 'white',
+  },
+  reportsCard: {
+    backgroundColor: '#fff',
+    width: '100%',
+    padding: 20,
+    borderRadius: 20,
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  reportsCount: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    color: '#009387',
+  },
+  reportsLabel: {
+    fontSize: 16,
+    color: '#009387',
+  },
+  actionButton: {
+    backgroundColor: '#009387',
+    width: '100%',
+    padding: 20,
+    borderRadius: 20,
+    alignItems: 'center',
+    marginBottom: 20,
+    flexDirection: 'row',
+    justifyContent: 'center',
+  },
+  actionText: {
     color: 'white',
     fontWeight: '700',
     fontSize: 16,
   },
-  buttonIcon: {
-    marginRight: 10, // Added to create space between the icon and text
-  },
-  greetText: {
-    color: 'black',
-    fontSize: 24,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginBottom: 80,
-  },
-  nameText: {
-    color: '#009387',
-  },
-  summaryContainer: {
-    marginTop: 20,
+  navigationBar: {
+    position: 'absolute',
+    bottom: 0,
+    flexDirection: 'row',
+    backgroundColor: '#009387',
+    width: '100%',
     padding: 10,
-    backgroundColor: '#f0f0f0',
-    borderRadius: 10,
-    width: '80%',
+    borderRadius: 20,
+    justifyContent: 'space-around',
+    alignItems: 'center', // Change the background color to match the primary color\
+    marginBottom: 20,
+  },
+  navButton: {
     alignItems: 'center',
+   
   },
-  summaryText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#444',
-  },
+  navButtonText: {
+    color: 'white',
+    marginTop: 5,
+    
+  }
 });
+
+export default HomeScreen;
