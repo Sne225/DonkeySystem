@@ -54,7 +54,7 @@ const LoginScreen = () => {
        setShowSuccessModal(true);
    setTimeout(() => {
      setShowSuccessModal(false);
-     navigation.replace("Home");
+     navigation.navigate("Home");
    }, 2500);
        console.log('Logged in with:', user.email);
    })

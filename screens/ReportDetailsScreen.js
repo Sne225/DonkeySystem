@@ -108,7 +108,7 @@ const ReportDetailsScreen = () => {
       setShowSuccessModal(true);
     setTimeout(() => {
       setShowSuccessModal(false);
-      navigation.replace("Home");
+      navigation.navigate("Home");
     }, 2500);
     } catch (error) {
       console.error('Error deleting report:', error);
