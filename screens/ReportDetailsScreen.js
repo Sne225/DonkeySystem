@@ -108,7 +108,7 @@ const ReportDetailsScreen = () => {
       setShowSuccessModal(true);
     setTimeout(() => {
       setShowSuccessModal(false);
-      navigation.replace("Home");
+      navigation.navigate("Home");
     }, 2500);
     } catch (error) {
       console.error('Error deleting report:', error);
@@ -223,7 +223,7 @@ const styles = StyleSheet.create({
   },
   photo: {
     width: '100%',
-    height: 200,
+    height: 310,
     resizeMode: 'cover',
     marginBottom: 20,
   },

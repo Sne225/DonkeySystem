@@ -129,10 +129,20 @@ const CreateReportScreen = () => {
   }
   
     let photoUrl = null;
-    if (photo) {
+     if (photo) {
       const photoRef = ref(storage, `photos/${Date.now()}`);
-      await uploadBytes(photoRef, photo);
-      photoUrl = await getDownloadURL(photoRef);
+    
+      try {
+        const response = await fetch(photo);
+        const blob = await response.blob();
+    
+        // Upload the image blob with the correct content type
+        await uploadBytes(photoRef, blob, { contentType: response.headers.get('content-type') });
+    
+        photoUrl = await getDownloadURL(photoRef);
+      } catch (error) {
+        console.error('Error reading or uploading image:', error);
+      }
     }
   
     const reportData = {
