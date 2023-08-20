@@ -7,8 +7,8 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 import {auth } from '../firebase';
 
-const facebookIcon = require('../assets/facebook.png');
-const googleIcon = require('../assets/google.png');
+const facebookIcon = require('../assets/images/facebook.png');
+const googleIcon = require('../assets/images/google.png');
 
 
 const LoginScreen = () => {

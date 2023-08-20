@@ -9,8 +9,8 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import Modal from 'react-native-modal';
 import { Checkbox } from 'react-native-paper';
 
-const facebookIcon = require('../assets/facebook.png');
-const googleIcon = require('../assets/google.png');
+const facebookIcon = require('../assets/images/facebook.png');
+const googleIcon = require('../assets/images/google.png');
 
 
 const CreateAccountScreens = () => {
@@ -112,7 +112,6 @@ const CreateAccountScreens = () => {
 
   return (
     <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollViewContent}>
-    <View style={styles.header}></View>
     <View style={styles.container}>
       <Text style={styles.heading}>Create Account 🐴</Text>
       <Text style={styles.subHeading}>Join the best community!</Text>
@@ -225,13 +224,10 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: '#FFFFFF',
   },
-  header: {
-    marginBottom: 20,
-    alignItems: 'center', // Center the content horizontally
-  },
     scrollViewContent: {
       flexGrow: 1,
       paddingVertical: 20,
+      backgroundColor: '#FFFFFF',
   },
   heading: {
     fontSize: 30,
