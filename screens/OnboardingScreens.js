@@ -35,6 +35,7 @@ const OnboardingScreen = ({ navigation }) => {
     try {
       const onboardingStatus = await AsyncStorage.getItem('onboardingDone');
       setIsOnboardingDone(onboardingStatus === 'true');
+      
     } catch (error) {
       console.error('Error reading onboarding status:', error);
     }
@@ -44,6 +45,7 @@ const OnboardingScreen = ({ navigation }) => {
     try {
       await AsyncStorage.setItem('onboardingDone', 'true');
       setIsOnboardingDone(true);
+      navigation.navigate('Login');
     } catch (error) {
       console.error('Error saving onboarding status:', error);
     }
