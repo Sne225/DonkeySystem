@@ -4,11 +4,11 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LoginScreen from './screens/LoginScreen';
 import HomeScreen from './screens/HomeScreen';
-import CreateAccount from './screens/CreateAccountScreenNew';
+import CreateAccount from './screens/CreateAccountScreens';
 import CreateReportScreen from './screens/CreateReportScreen';
 import ViewReportsScreen from './screens/ViewReportsScreen';
 import ReportDetailsScreen from './screens/ReportDetailsScreen';
-import OnboardingScreen from './screens/OnboardingScreens';
+import OnboardingScreen from './screens/OnboardingScreenz';
 import SettingsScreen from './screens/SettingsScreen';
 
 
@@ -31,7 +31,7 @@ export default function App() {
         <Stack.Screen name="Onboarding" component={OnboardingScreen} options={{headerShown: false}} />
         <Stack.Screen options={{headerShown: false}} name="Login" component={LoginScreen} />
         {/* <Stack.Screen name="CreateAccount" component={CreateAccount} options={{title: 'Create Account',}}/> */}
-        <Stack.Screen name="CreateAccount" component={CreateAccount} options={{title: 'Create Account',}}/>
+        <Stack.Screen name="CreateAccount" component={CreateAccount} options={{headerShown: false}}/>
         <Stack.Screen name="Home" component={HomeScreen}  options={{title: 'Home', headerShown: false, }}/>
         <Stack.Screen name="CreateReport" component={CreateReportScreen} options={{ headerLeft: null, title: 'Create Report',  }}/>
         <Stack.Screen name="ViewReports" component={ViewReportsScreen} options={{title: 'View Reports',}}/>

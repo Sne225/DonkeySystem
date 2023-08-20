@@ -1,19 +1,23 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
-import { CheckBox } from '@react-native-community/checkbox';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, ScrollView, Alert } from 'react-native';
+import { CheckBox } from 'react-native-check-box';
 import { useNavigation } from '@react-navigation/native';
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
 import { getFirestore, setDoc, doc } from 'firebase/firestore';
 import { Feather, FontAwesome } from '@expo/vector-icons';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Modal from 'react-native-modal';
-
+import { Checkbox } from 'react-native-paper';
 
 const facebookIcon = require('../assets/facebook.png');
 const googleIcon = require('../assets/google.png');
 
-const CreateAccountScreenNew = () => {
+
+const CreateAccountScreens = () => {
+  
   const navigation = useNavigation();
+
+
 
   const [name, setName] = useState('');
   const [surname, setSurname] = useState('');
@@ -21,9 +25,45 @@ const CreateAccountScreenNew = () => {
   const [city, setCity] = useState('');
   const [password, setPassword] = useState('');
   const [agreeToTerms, setAgreeToTerms] = useState(true);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+
 
   const handleSignUp = async () => {
     try {
+
+      if (name.trim() === '') {
+        Alert.alert('Name Not Entered', 'Please enter your name');
+        return;
+      }
+      if (surname.trim() === '') {
+        Alert.alert('Surname Not Entered', 'Please enter your surname');
+        return;
+      }
+      if (email.trim() === '') {
+        Alert.alert('Email Not Entered', 'Please enter your email address 📧');
+        return;
+      }
+ 
+      if (!isValidEmail(email)) {
+        Alert.alert('Invalid Email', 'Please enter a valid email address');
+        return;
+      }
+
+      if (city.trim() === '') {
+        Alert.alert('City Not Entered', 'Please enter your city 📍');
+        return;
+      }
+  
+      if (password.trim() === '') {
+        Alert.alert('Password Empty', 'Please enter a password 🔑');
+        return;
+      }
+ 
+      if (password.length < 6)
+      {
+        Alert.alert('Password Too Short', 'Please enter at least 6 characters');
+        return;
+      }
       const auth = getAuth();
   
       // Create the user account using Firebase Authentication
@@ -61,9 +101,20 @@ const CreateAccountScreenNew = () => {
     }
   };
 
+  const handleCheckboxPress = () => {
+    setAgreeToTerms(!agreeToTerms);
+  };
+  
+  const isValidEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
   return (
+    <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollViewContent}>
+    <View style={styles.header}></View>
     <View style={styles.container}>
-      <Text style={styles.heading}>Create Account</Text>
+      <Text style={styles.heading}>Create Account 🐴</Text>
       <Text style={styles.subHeading}>Join the best community!</Text>
 
       <View style={styles.inputContainer}>
@@ -116,16 +167,32 @@ const CreateAccountScreenNew = () => {
       </View>
 
       <View style={styles.checkboxContainer}>
-        <CheckBox
-          value={agreeToTerms}
-          onValueChange={setAgreeToTerms}
-        />
+      <TouchableOpacity style={[styles.checkbox, agreeToTerms && styles.checked]} onPress={handleCheckboxPress}>
+        {agreeToTerms && <Feather name="check" size={18} color="white" />}
+      </TouchableOpacity>
         <Text style={styles.checkboxLabel}>I agree to the terms and conditions</Text>
       </View>
 
       <TouchableOpacity style={styles.signUpButton} onPress={handleSignUp}>
         <Text style={styles.signUpButtonText}>Sign Up</Text>
       </TouchableOpacity>
+
+      <Modal isVisible={showSuccessModal}>
+        <View
+          style={{
+            backgroundColor: '#009387',
+            padding: 20,
+            borderRadius: 10,
+            alignItems: 'center',
+            flexDirection: 'row',
+          }}
+        >
+          <Icon name="check" size={20} color="white" />
+          <Text style={{ color: 'white', fontSize: 18, fontWeight: 'bold', marginLeft: 10 }}>
+            Account Created Successfully!
+          </Text>
+        </View>
+      </Modal>
 
       <View style={styles.separatorContainer}>
         <View style={styles.separator} />
@@ -148,6 +215,7 @@ const CreateAccountScreenNew = () => {
         </TouchableOpacity>
       </View>
     </View>
+    </ScrollView>
   );
 };
 
@@ -156,6 +224,14 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     backgroundColor: '#FFFFFF',
+  },
+  header: {
+    marginBottom: 20,
+    alignItems: 'center', // Center the content horizontally
+  },
+    scrollViewContent: {
+      flexGrow: 1,
+      paddingVertical: 20,
   },
   heading: {
     fontSize: 30,
@@ -196,6 +272,11 @@ const styles = StyleSheet.create({
   },
   checkboxLabel: {
     fontWeight: 'bold',
+    
+  },
+  checked: {
+    backgroundColor: '#009387',
+    borderColor: 'white',
   },
   signUpButton: {
     backgroundColor: '#009387',
@@ -261,4 +342,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CreateAccountScreenNew;
+export default CreateAccountScreens;
