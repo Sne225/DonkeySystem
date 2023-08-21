@@ -24,9 +24,11 @@ export default function OnboardingScreen() {
             onSkip={handleDone}
             bottomBarHighlight={false}
             containerStyles={{paddingHorizontal: 15}}
+            titleStyles={{color: "white"}}
+            subTitleStyles={{color: "white"}}
             pages={[
                 {
-                    backgroundColor: '#4ec3f9',
+                    backgroundColor: '#E3B448',
                     image: (
                         <View style={styles.lottie}>
                             <LottieView source={require('../assets/animations/insight.json')} autoPlay loop />
@@ -36,7 +38,8 @@ export default function OnboardingScreen() {
                     subtitle: 'Your ultimate app for reporting donkey sightings!',
                 },
                 {
-                    backgroundColor: '#1abc9c',
+                    
+                    backgroundColor: '#317773',
                     image: (
                         <View style={styles.lottie}>
                             <LottieView source={require('../assets/animations/easy.json')} autoPlay loop />
@@ -44,9 +47,10 @@ export default function OnboardingScreen() {
                     ),
                     title: 'Easy Reporting',
                     subtitle: 'Reporting donkey sightings has never been easier!',
+
                 },
                 {
-                    backgroundColor: '#34495e',
+                    backgroundColor: '#101820',
                     image: (
                         <View style={styles.lottie}>
                             <LottieView source={require('../assets/animations/community.json')} autoPlay loop />
