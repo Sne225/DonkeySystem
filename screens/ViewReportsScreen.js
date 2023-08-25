@@ -147,7 +147,7 @@ const ViewReportScreen = ( {reportId}) => {
       {reports.length === 0 ? (
         <Text style={styles.noReportsText}>No Reports found</Text>
       ) : (
-        <FlatList
+        <FlatList showsVerticalScrollIndicator={false}
           data={reports}
           renderItem={renderItem}
           keyExtractor={(item) => item.id}

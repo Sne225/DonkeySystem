@@ -7,8 +7,8 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 import {auth } from '../firebase';
 
-const facebookIcon = require('../assets/facebook.png');
-const googleIcon = require('../assets/google.png');
+const facebookIcon = require('../assets/images/facebook.png');
+const googleIcon = require('../assets/images/google.png');
 
 
 const LoginScreen = () => {
@@ -18,7 +18,7 @@ const LoginScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');  
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [error, setError] = useState(''); 
+  const [isChecked, setIsChecked] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
 
   const handleSignIn = async () => {
@@ -43,7 +43,7 @@ const LoginScreen = () => {
 
      if (password.length < 6)
      {
-       Alert.alert('Error Login', 'Password short. Please enter at least characters! 🔢');
+       Alert.alert('Error Login', 'Password short. Please enter at least 6 characters! 🔢');
        return;
      }
 
@@ -80,6 +80,10 @@ const LoginScreen = () => {
    });
  }};
 
+ const handleCheckboxPress = () => {
+  setIsChecked(!isChecked);
+};
+
  //Validation of email address
  const isValidEmail = (email) => {
    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -88,13 +92,13 @@ const LoginScreen = () => {
  
  //Navigate to create account screen
  const handleCreateAccount = () => {
-   navigation.navigate('CreateAccount');
+   navigation.navigate("CreateAccount");
  };
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-      <Text style={styles.heading}>Hi, Welcome Back👋</Text>
+      <Text style={styles.heading}>Hi, Welcome Back 🥳</Text>
       <Text style={styles.subHeading}>Hello again. You have been missed!</Text>
       </View>
 
@@ -131,9 +135,9 @@ const LoginScreen = () => {
         </View>
 
       <View style={styles.checkboxContainer}>
-        <TouchableOpacity style={styles.checkbox}>
-          {/* Implement your checkbox logic here */}
-        </TouchableOpacity>
+       <TouchableOpacity style={[styles.checkbox, isChecked && styles.checked]} onPress={handleCheckboxPress}>
+        {isChecked && <Feather name="check" size={18} color="white" />}
+      </TouchableOpacity>
         <Text style={styles.checkboxLabel}>Remember Me</Text>
         <Text style={styles.forgotPassword}>Forgot Password</Text>
       </View>
@@ -241,6 +245,11 @@ const styles = StyleSheet.create({
   },
   checkboxLabel: {
     fontWeight: 'bold',
+    
+  },
+  checked: {
+    backgroundColor: '#009387',
+    borderColor: 'white',
   },
   forgotPassword: {
     color: 'red',
