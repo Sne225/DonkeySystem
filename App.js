@@ -10,6 +10,7 @@ import ViewReportsScreen from './screens/ViewReportsScreen';
 import ReportDetailsScreen from './screens/ReportDetailsScreen';
 import OnboardingScreen from './screens/OnboardingScreenz';
 import SettingsScreen from './screens/SettingsScreen';
+import LeaderboardScreen from './screens/Leaderboardscreen';
 
 
 const Stack = createNativeStackNavigator();
@@ -37,6 +38,7 @@ export default function App() {
         <Stack.Screen name="ViewReports" component={ViewReportsScreen} options={{title: 'View Reports',}}/>
         <Stack.Screen name="ReportDetails" component={ReportDetailsScreen} options={{title: 'Report Details',}}/>
         <Stack.Screen name="Settings" component={SettingsScreen} options={{headerShown: false,}} />
+        <Stack.Screen name="Leaderboard" component={LeaderboardScreen} options={{headerShown: false,}} />
       </Stack.Navigator>
     </NavigationContainer>
   );
