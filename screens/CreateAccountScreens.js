@@ -114,7 +114,7 @@ const CreateAccountScreens = () => {
     <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollViewContent}>
     <View style={styles.container}>
       <Text style={styles.heading}>Create Account 🐴</Text>
-      <Text style={styles.subHeading}>Join the best community!</Text>
+      <Text style={styles.subHeading}>Join the  community!</Text>
 
       <View style={styles.inputContainer}>
         <Text style={styles.inputLabel}>Name</Text>
