@@ -109,14 +109,14 @@ const HomeScreen = () => {
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.navButton}
-          onPress={() => {}}
+          onPress={handleLeaderboard}
         >
           <Feather name="award" size={24} color='white' />
           <Text style={styles.navButtonText}>Leaderboards</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.navButton}
-          onPress={handleLeaderboard}
+          onPress={() => {}}
         >
           <Feather name="bell" size={24} color='white'/>
           <Text style={styles.navButtonText}>Notifications</Text>
