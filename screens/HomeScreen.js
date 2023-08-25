@@ -62,6 +62,10 @@ const HomeScreen = () => {
     navigation.navigate('Settings');
   }
 
+  const handleLeaderboard = () => {
+    navigation.navigate('Leaderboard');
+  }
+
   if (isLoading) {
     return (
       <View style={styles.container}>
@@ -112,7 +116,7 @@ const HomeScreen = () => {
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.navButton}
-          onPress={() => {}}
+          onPress={handleLeaderboard}
         >
           <Feather name="bell" size={24} color='white'/>
           <Text style={styles.navButtonText}>Notifications</Text>
