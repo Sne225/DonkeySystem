@@ -4,6 +4,10 @@ import { auth, firestore } from '../firebase';
 import { collection, doc, getDoc, getDocs } from 'firebase/firestore';
 import { useNavigation, useIsFocused } from '@react-navigation/core';
 import { Feather } from '@expo/vector-icons'; // Import Feather icons from Expo
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import LeaderboardScreen from './path/to/LeaderboardScreen'; // Import your LeaderboardScreen component
+
+const Stack = createNativeStackNavigator();
 
 const HomeScreen = () => {
   const navigation = useNavigation();
@@ -12,6 +16,12 @@ const HomeScreen = () => {
   const [reportCount, setReportCount] = useState(0);
   const isFocused = useIsFocused(); // Get the focused state of the screen
 
+  const AppNavigator = () => (
+    <Stack.Navigator>
+      {/* ... other routes ... */}
+      <Stack.Screen name="Leaderboards" component={LeaderboardScreen} />
+    </Stack.Navigator>
+  );
 
   useEffect(() => {
     const getUserData = async () => {
@@ -79,8 +89,8 @@ const HomeScreen = () => {
         <Feather name="list" size={24} color="white" style={styles.buttonIcon} />
         <Text style={styles.buttonText}>View Reports ({reportCount})</Text>
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => {}} style={styles.button}>
-        <Feather name="award" size={24} color="white" style={styles.buttonIcon} />
+      <TouchableOpacity onPress={() => navigation.navigate('Leaderboards')} style={styles.button}>
+        <Feather name="award" size={24} color="white" style={styles.buttonIcon}/>
         <Text style={styles.buttonText}>Leaderboard</Text>
       </TouchableOpacity>
       <TouchableOpacity onPress={handleSignOut} style={styles.button}>
@@ -100,7 +110,8 @@ const HomeScreen = () => {
   );
 };
 
-export default HomeScreen;
+export default HomeScreen; 
+
 
 const styles = StyleSheet.create({
   container: {

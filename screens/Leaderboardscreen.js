@@ -1,5 +1,23 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  Switch,
+  ScrollView,
+  Button,
+  TouchableOpacity,
+  Image,
+  Alert, ActivityIndicator,StyleSheet,
+} from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { FontAwesome } from '@expo/vector-icons';
+import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
+import { getFirestore, setDoc, doc } from 'firebase/firestore';
+import { collection, getDocs } from 'firebase/firestore';
+import { useNavigation } from '@react-navigation/core';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import Modal from 'react-native-modal';
 import { firestore } from '../firebase';
 
 const LeaderboardScreen = () => {
@@ -27,10 +45,18 @@ const LeaderboardScreen = () => {
       });
 
       // Convert userReportCounts object into an array and sort it
-      const sortedLeaderboardData = Object.keys(userReportCounts).map((userId) => ({
-        userId,
-        reportCount: userReportCounts[userId],
-      }));
+      const userIds = Object.keys(userReportCounts);
+      const leaderboardDataPromises = userIds.map(async (userId) => {
+        const userDataSnapshot = await firestore.collection('users').doc(userId).get();
+        const userData = userDataSnapshot.data();
+        return {
+          userId,
+          reportCount: userReportCounts[userId],
+          username: userData.username,
+        };
+      });
+
+      const sortedLeaderboardData = await Promise.all(leaderboardDataPromises);
       sortedLeaderboardData.sort((a, b) => b.reportCount - a.reportCount);
 
       setLeaderboardData(sortedLeaderboardData);
@@ -51,6 +77,8 @@ const LeaderboardScreen = () => {
     </View>
   );
 };
+
+
 
 const styles = StyleSheet.create({
   container: {

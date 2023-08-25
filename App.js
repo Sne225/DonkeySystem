@@ -2,6 +2,10 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { initializeApp } from "firebase/app";
+import * as firebase from 'firebase/app';
+import 'firebase/firestore';
+import 'firebase/auth';
 import LoginScreen from './screens/LoginScreen';
 import HomeScreen from './screens/HomeScreen';
 import CreateAccount from './screens/CreateAccountScreen';
@@ -41,6 +45,21 @@ export default function App() {
     </NavigationContainer>
   );
 }
+
+//firebaseconfiguration
+const firebaseConfig = {
+    apiKey: "AIzaSyCPn8Y47KaPBy8dppFf7SZ5Ni5cUMJ1XwY",
+    authDomain: "donkeysystem-6b9fc.firebaseapp.com",
+    databaseURL: "https://donkeysystem-6b9fc-default-rtdb.firebaseio.com",
+    projectId: "donkeysystem-6b9fc",
+    storageBucket: "donkeysystem-6b9fc.appspot.com",
+    messagingSenderId: "311146237020",
+    appId: "1:311146237020:web:7de2c6d0f9bb5d020eea99"
+  };
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig); 
+//if problem use if(!firebase.apps.length){firebase.initializeApp(firebaseConfig);}
 
 const styles = StyleSheet.create({
   container: {
