@@ -85,6 +85,10 @@ const HomeScreen = () => {
     navigation.navigate('Notifications');
   }
 
+  const handleLeaderboard = () => {
+    navigation.navigate('Leaderboard');
+  }
+
   if (isLoading) {
     return (
       <View style={styles.container}>
@@ -167,14 +171,14 @@ const HomeScreen = () => {
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.navButton}
-          onPress={() => {}}
+          onPress={handleLeaderboard}
         >
           <Feather name="award" size={24} color='white' />
           <Text style={styles.navButtonText}>Leaderboards</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.navButton}
-          onPress={() => navigation.navigate('Notifications')}
+          onPress={handleNotifications}
         >
           <Feather name="bell" size={24} color='white'/>
           <Text style={styles.navButtonText}>Notifications</Text>
