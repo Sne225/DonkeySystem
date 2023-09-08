@@ -1,46 +1,49 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList } from 'react-native';
-import { collection, query, orderBy, getDocs, doc, getDoc, where } from 'firebase/firestore';
-import { firestore } from '../firebase'; // Import your Firebase configuration
+import { firestore } from '../firebase';
+import { getFirestore, collection, getDocs } from 'firebase/firestore';
+
 
 const LeaderboardScreen = () => {
   const [leaderboardData, setLeaderboardData] = useState([]);
 
   useEffect(() => {
-    const fetchLeaderboard = async () => {
+    const fetchLeaderboardData = async () => {
       try {
         const usersCollection = collection(firestore, 'users');
-        const leaderboardQuery = query(usersCollection, orderBy('reportCount', 'desc'));
-        const querySnapshot = await getDocs(leaderboardQuery);
-
-        const leaderboardData = [];
-
-        for (const docSnapshot of querySnapshot.docs) {
-          const userData = docSnapshot.data();
-          const userId = docSnapshot.id;
-
-          // Fetch the count of reports for each user
-          const userReportsCollection = collection(usersCollection, userId, 'reports');
-          const userReportsQuery = query(userReportsCollection);
-          const userReportsSnapshot = await getDocs(userReportsQuery);
-
-          const reportCount = userReportsSnapshot.size;
-
-          leaderboardData.push({
-            id: userId,
-            name: userData.name,
-            reportCount: reportCount,
-          });
+        const querySnapshot = await getDocs(usersCollection);
+  
+        const leaderboard = [];
+  
+        for (const doc of querySnapshot.docs) {
+          const userData = doc.data().user;
+  
+          // Check if the 'user' property exists before accessing its properties
+          if (userData) {
+            const reportsCollection = collection(doc.ref, 'reports');
+            const reportsQuerySnapshot = await getDocs(reportsCollection);
+  
+            leaderboard.push({
+              id: doc.id,
+              name: userData.name || '', // Use an empty string as a default value if 'name' is undefined
+              surname: userData.surname || '', // Use an empty string as a default value if 'surname' is undefined
+              reportCount: reportsQuerySnapshot.size,
+            });
+          }
         }
-
-        setLeaderboardData(leaderboardData);
+  
+        // Sort the leaderboard by report count in descending order
+        leaderboard.sort((a, b) => b.reportCount - a.reportCount);
+  
+        setLeaderboardData(leaderboard);
       } catch (error) {
-        console.error('Error getting leaderboard data:', error);
+        console.error('Error fetching leaderboard data:', error);
       }
     };
-
-    fetchLeaderboard();
+  
+    fetchLeaderboardData();
   }, []);
+  
 
   return (
     <View>
@@ -50,7 +53,7 @@ const LeaderboardScreen = () => {
         keyExtractor={(item) => item.id}
         renderItem={({ item, index }) => (
           <View>
-            <Text>{`${index + 1}. ${item.name}`}</Text>
+            <Text>{`${index + 1}. ${item.name} ${item.surname}`}</Text>
             <Text>{`Reports: ${item.reportCount}`}</Text>
           </View>
         )}
