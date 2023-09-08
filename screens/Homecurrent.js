@@ -1,46 +1,18 @@
-import { StyleSheet, Text, TouchableOpacity, View, ActivityIndicator, SafeAreaView } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View, ActivityIndicator } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { auth, firestore } from '../firebase';
 import { collection, doc, getDoc, getDocs } from 'firebase/firestore';
-import { useNavigation, useIsFocused } from '@react-navigation/native';
+import { useNavigation, useIsFocused } from '@react-navigation/core';
 import { Feather } from '@expo/vector-icons';
-import {
-  useFonts,
-  Inter_100Thin,
-  Inter_200ExtraLight,
-  Inter_300Light,
-  Inter_400Regular,
-  Inter_500Medium,
-  Inter_600SemiBold,
-  Inter_700Bold,
-  Inter_800ExtraBold,
-  Inter_900Black,
-} from '@expo-google-fonts/inter';
-import AppLoading from 'expo-app-loading';
-
-
 
 
 const HomeScreen = () => {
   const navigation = useNavigation();
-
   const [userName, setUserName] = useState('');
   const [userCity, setUserCity] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [reportCount, setReportCount] = useState(0);
   const isFocused = useIsFocused();
-
-  let [fontsLoaded] = useFonts({
-    Inter_100Thin,
-    Inter_200ExtraLight,
-    Inter_300Light,
-    Inter_400Regular,
-    Inter_500Medium,
-    Inter_600SemiBold,
-    Inter_700Bold,
-    Inter_800ExtraBold,
-    Inter_900Black,
-  });
 
   useEffect(() => {
     const getUserData = async () => {
@@ -69,6 +41,15 @@ const HomeScreen = () => {
     getUserData();
   }, [isFocused]);
 
+  const handleSignOut = () => {
+    auth
+      .signOut()
+      .then(() => {
+        navigation.replace('Login');
+      })
+      .catch(error => alert(error.message));
+  };
+
   const handleCreateReport = () => {
     navigation.navigate('CreateReport');
   };
@@ -81,10 +62,6 @@ const HomeScreen = () => {
     navigation.navigate('Settings');
   }
 
-  const handleNotifications = () => {
-    navigation.navigate('Notifications');
-  }
-
   if (isLoading) {
     return (
       <View style={styles.container}>
@@ -92,70 +69,31 @@ const HomeScreen = () => {
       </View>
     );
   }
-  if (!fontsLoaded) {
-    return <AppLoading />;
-  } else {
+
   return (
-    // <SafeAreaView style={{ flex: 1 }}>
     <View style={styles.container}>
-      <Text style={{fontSize: 39, color: 'white', position: 'absolute',
-     top: 35, 
-     left: 30, 
-     fontFamily: 'Inter_600SemiBold' }}>Hi, {userName}</Text>
-      <View style={styles.profileLogo}>
-          <Feather name="user" size={25} color="#009387" />
+      <View style={styles.profileCard}>
+        <View style={styles.profileLogo}>
+          <Feather name="user" size={40} color="#009387" />
         </View>
-        <Text style={{fontSize: 20,
-    color: 'white',
-    position: 'absolute',
-     top:87, 
-     left: 30, fontFamily: 'Inter_400Regular'}}>Let's get to work</Text>
-    
-     <Text style={styles.heading}>Project Tasks</Text>
-
-      <View style={styles.tasks}>
-        <Text style={{fontSize: 16, fontFamily: 'Inter_600SemiBold', color: '#009387', position: 'absolute',
-     top: 20, 
-     left: 15,}}>Create New Report</Text>
-     <Text style={{fontSize: 12, fontFamily: 'Inter_600SemiBold', color: 'lightgrey',
-     top: 10, 
-     left: -20,}}>Your new reports are logged in here</Text>
-
-        <View style={styles.FAB}>
-        <Feather name="plus" size={25} color="white" style={{ fontWeight: 'bold' }} onPress={handleCreateReport}/>
-        </View>
+        <Text style={styles.userName}>{userName}</Text>
+        <Text style={styles.userCity}>{userCity}</Text>
       </View>
 
-      <Text style={styles.heading}>Completed Tasks</Text>
-
-      <View style={styles.tasks}>
-        <Text style={{fontSize: 16, fontFamily: 'Inter_600SemiBold', color: '#009387', position: 'absolute',
-     top: 20, 
-     left: 15,}}>Reports Completed</Text>
-     <Text style={{fontSize: 12, fontFamily: 'Inter_600SemiBold', color: 'lightgrey',
-     top: 10, 
-     left: -20,}}>Number of reports you've submitted</Text>
-
-        <View style={styles.FAB}>
-        <Text style={{fontSize: 20, color: 'white',
-    fontFamily:  'Inter_600SemiBold', paddingLeft: 4, textAlign: 'center',}}>{reportCount}</Text>
-        </View>
+      <View style={styles.reportsCard}>
+        <Text style={styles.reportsCount}>{reportCount}</Text>
+        <Text style={styles.reportsLabel}>Reports Completed</Text>
       </View>
 
-      <Text style={styles.heading}>Reports</Text>
+      <TouchableOpacity onPress={handleCreateReport} style={styles.actionButton}>
+        <Feather name="file-plus" size={24} color="white" />
+        <Text style={styles.actionText}>   Create A Report</Text>
+      </TouchableOpacity>
 
-      <View style={styles.tasks}>
-        <Text style={{fontSize: 16, fontFamily: 'Inter_600SemiBold', color: '#009387', position: 'absolute',
-     top: 20, 
-     left: 15,}}>View Reports</Text>
-     <Text style={{fontSize: 12, fontFamily: 'Inter_600SemiBold', color: 'lightgrey',
-     top: 10, 
-     left: -20,}}>Your saved reports are stored in here</Text>
-
-        <View style={styles.FAB}>
-        <Feather name="folder" size={25} color="white" style={{ fontWeight: 'bold' }} onPress={handleViewReports}/>
-        </View>
-      </View>
+      <TouchableOpacity onPress={handleViewReports} style={styles.actionButton}>
+        <Feather name="list" size={24} color="white" />
+        <Text style={styles.actionText}>      View Reports</Text>
+      </TouchableOpacity>
 
       <View style={styles.navigationBar}>
         <TouchableOpacity
@@ -174,7 +112,7 @@ const HomeScreen = () => {
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.navButton}
-          onPress={() => navigation.navigate('Notifications')}
+          onPress={() => {}}
         >
           <Feather name="bell" size={24} color='white'/>
           <Text style={styles.navButtonText}>Notifications</Text>
@@ -188,51 +126,36 @@ const HomeScreen = () => {
         </TouchableOpacity>
       </View>
     </View>
-    // </SafeAreaView>
   );
-  }
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    backgroundColor: '#317773',
+    alignItems: 'center',
+    backgroundColor: '#f0f0f0',
     padding: 20,
   },
-  heading: {
-    textAlign: 'left',
-    color: 'white',
-    fontSize: 17,
-    marginBottom: 10,
-    fontFamily: 'Inter_600SemiBold',
-    left: 12,
-  },
-  tasks: {
-    backgroundColor: 'white',
+  profileCard: {
+    backgroundColor: '#009387',
     width: '100%',
-    padding: 35,
+    padding: 28,
     borderRadius: 20,
+    alignItems: 'center',
     marginBottom: 30,
   },
   profileLogo: {
     backgroundColor: 'white',
-  padding: 15,
-  borderRadius: 40,
-  marginBottom: 10,
-  position: 'absolute',
-  top: 52, // Adjust this value to control the vertical spacing from the top
-  right: 29,
+    padding: 15,
+    borderRadius: 50,
+    marginBottom: 10,
   },
-  FAB: {
-    position: 'absolute',
-    borderRadius: 15,
-    padding: 10,
-    backgroundColor: '#009387',
-    margin: 24,
-    right: 0,
-    bottom: -2,
-    
+  userName: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: 'white',
+    marginBottom: 5,
   },
   userCity: {
     fontSize: 16,
@@ -245,6 +168,11 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     alignItems: 'center',
     marginBottom: 20,
+  },
+  reportsCount: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    color: '#009387',
   },
   reportsLabel: {
     fontSize: 16,
@@ -267,8 +195,7 @@ const styles = StyleSheet.create({
   },
   navigationBar: {
     position: 'absolute',
-    left: 21,
-    bottom: 10,
+    bottom: 0,
     flexDirection: 'row',
     backgroundColor: '#009387',
     width: '100%',
