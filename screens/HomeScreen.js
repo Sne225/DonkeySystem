@@ -16,7 +16,7 @@ import {
   Inter_800ExtraBold,
   Inter_900Black,
 } from '@expo-google-fonts/inter';
-import AppLoading from 'expo-app-loading';
+// import AppLoading from 'expo-app-loading';
 
 
 
@@ -41,6 +41,7 @@ const HomeScreen = () => {
     Inter_800ExtraBold,
     Inter_900Black,
   });
+
 
   useEffect(() => {
     const getUserData = async () => {
@@ -69,6 +70,9 @@ const HomeScreen = () => {
     getUserData();
   }, [isFocused]);
 
+ 
+
+
   const handleCreateReport = () => {
     navigation.navigate('CreateReport');
   };
@@ -92,13 +96,14 @@ const HomeScreen = () => {
   if (isLoading) {
     return (
       <View style={styles.container}>
-        <ActivityIndicator size="large" color="#009387" />
+        <Text style={styles.loadingText}>Loading...</Text>
+        <ActivityIndicator size="large" color="white" />
       </View>
     );
   }
-  if (!fontsLoaded) {
-    return <AppLoading />;
-  } else {
+  // if (!fontsLoaded) {
+  //   return <AppLoading />;
+  // }
   return (
     // <SafeAreaView style={{ flex: 1 }}>
     <View style={styles.container}>
@@ -194,7 +199,7 @@ const HomeScreen = () => {
     </View>
     // </SafeAreaView>
   );
-  }
+  
 };
 
 const styles = StyleSheet.create({
@@ -249,6 +254,15 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     alignItems: 'center',
     marginBottom: 20,
+  },
+  loadingText: {
+    fontWeight: "bold",
+    fontSize: 18,
+    color: 'white',
+    justifyContent: 'center',
+    marginBottom: 20,
+    left: 124,
+
   },
   reportsLabel: {
     fontSize: 16,
