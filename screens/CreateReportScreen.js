@@ -19,6 +19,8 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { useNavigation } from '@react-navigation/native';
 import Modal from 'react-native-modal';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { Camera } from 'expo-camera'; // Import Camera from expo-camera
+
 
 
 
@@ -43,6 +45,10 @@ const CreateReportScreen = () => {
   const [followUp, setFollowUp] = useState(false);
   const [followUpDate, setFollowUpDate] = useState(null);
   const [isSubmitSuccess, setIsSubmitSuccess] = useState(false);
+  const [cameraPermission, setCameraPermission] = useState(null);
+  const [showCamera, setShowCamera] = useState(false);
+  const [cameraType, setCameraType] = useState(Camera.Constants.Type.back);
+  const [cameraRef, setCameraRef] = useState(null);
   const navigation = useNavigation();
 
   const handleDateChange = (event, selectedDate) => {
@@ -50,6 +56,13 @@ const CreateReportScreen = () => {
     setShowDatePicker(false);
     setDate(currentDate);
   };
+
+  useEffect(() => {
+    (async () => {
+      const cameraPermissionStatus = await Camera.requestCameraPermissionsAsync();
+      setCameraPermission(cameraPermissionStatus.status === 'granted');
+    })();
+  }, []);
 
   const handleImagePick = async () => {
     try {
@@ -79,6 +92,18 @@ const CreateReportScreen = () => {
     }
     } catch (error) {
       console.log('Error picking image:', error);
+    }
+  };
+
+  const handleTakePicture = async () => {
+    if (cameraRef) {
+      try {
+        const photoData = await cameraRef.takePictureAsync({ quality: 0.7 });
+        setPhoto(photoData.uri);
+        setShowCamera(false); // Close the camera view after taking a picture
+      } catch (error) {
+        console.log('Error taking picture:', error);
+      }
     }
   };
 
@@ -367,19 +392,73 @@ const CreateReportScreen = () => {
         <Switch value={poorHealth} onValueChange={setPoorHealth} />
       </View>
 
-      {/* Photo Field */}
+      {/* Photo Field
+      <View style={styles.fieldContainer}>
+        <Text style={styles.label}>Take a Photo of the Donkey</Text>
+        
+        {/* <TouchableOpacity style={styles.photoButton} onPress={handleRemovePhoto}>
+                <Ionicons name="close-circle-outline" size={24} color="white" />
+              </TouchableOpacity>
+      </View>*/}
+
+      {/* Camera Field */}
       <View style={styles.fieldContainer}>
         <Text style={styles.label}>Take a Photo of the Donkey</Text>
         <TouchableOpacity style={styles.photoButton} onPress={handleImagePick}>
+          {/* {photo ? (
+            <Image source={{ uri: photo }} style={styles.photoPreview} />
+          ) : (
+          )} */}
+          <Text style={styles.photoButtonText}>Upload Photo</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.photoButton}
+          onPress={() => setShowCamera(true)}
+        >
           {photo ? (
             <Image source={{ uri: photo }} style={styles.photoPreview} />
           ) : (
             <Text style={styles.photoButtonText}>Take Photo</Text>
           )}
         </TouchableOpacity>
-        <TouchableOpacity style={styles.photoButton} onPress={handleRemovePhoto}>
-                <Ionicons name="close-circle-outline" size={24} color="white" />
-              </TouchableOpacity>
+        {photo && (
+          <TouchableOpacity
+            style={styles.photoButton}
+            onPress={handleRemovePhoto}
+          >
+            <Ionicons name="close-circle-outline" size={24} color="white" />
+          </TouchableOpacity>
+        )}
+        {showCamera && cameraPermission && (
+          <View style={styles.cameraContainer}>
+            <Camera
+              style={styles.cameraPreview}
+              type={cameraType}
+              ref={(ref) => setCameraRef(ref)}
+            >
+              <View style={styles.cameraControls}>
+                <TouchableOpacity
+                  style={styles.cameraControlButton}
+                  onPress={handleTakePicture}
+                >
+                  <Ionicons name="camera" size={32} color="white" />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.cameraControlButton}
+                  onPress={() =>
+                    setCameraType(
+                      cameraType === Camera.Constants.Type.back
+                        ? Camera.Constants.Type.front
+                        : Camera.Constants.Type.back
+                    )
+                  }
+                >
+                  <Ionicons name="camera-reverse" size={32} color="white" />
+                </TouchableOpacity>
+              </View>
+            </Camera>
+          </View>
+        )}
       </View>
 
       {/* Owner Reports */}
@@ -581,7 +660,27 @@ const styles = {
     marginLeft: 5,
     color: 'white',
   },
-  
+  cameraContainer: {
+    flex: 1,
+    flexDirection: 'column',
+    backgroundColor: 'black',
+  },
+  cameraPreview: {
+    flex: 1,
+    width: '100%',
+    height: 450,
+    marginBottom: 10,
+  },
+  cameraControls: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    justifyContent: 'space-between',
+    padding: 20,
+  },
+  cameraControlButton: {
+    padding: 10,
+  },  
 };
 
 export default CreateReportScreen;
