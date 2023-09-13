@@ -16,7 +16,6 @@ import {
   Inter_800ExtraBold,
   Inter_900Black,
 } from '@expo-google-fonts/inter';
-// import AppLoading from 'expo-app-loading';
 
 
 
@@ -94,16 +93,14 @@ const HomeScreen = () => {
   }
 
   if (isLoading) {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.loadingText}>Loading...</Text>
-        <ActivityIndicator size="large" color="white" />
-      </View>
-    );
-  }
-  // if (!fontsLoaded) {
-  //   return <AppLoading />;
-  // }
+      return (
+        <View style={styles.container}>
+          <Text style={styles.loadingText}>Loading...</Text>
+          <ActivityIndicator size="large" color="white" />
+        </View>
+      );
+    }
+
   return (
     // <SafeAreaView style={{ flex: 1 }}>
     <View style={styles.container}>

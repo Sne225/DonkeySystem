@@ -45,7 +45,8 @@
     "react-native-screens": "~3.20.0",
     "react-native-svg": "13.4.0",
     "react-native-vector-icons": "^10.0.0",
-    "undefined": "react-native-vector-icons/Ionicons"
+    "undefined": "react-native-vector-icons/Ionicons",
+    "expo-location": "~15.1.1"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"
