@@ -20,7 +20,8 @@ import { useNavigation } from '@react-navigation/native';
 import Modal from 'react-native-modal';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Camera } from 'expo-camera'; // Import Camera from expo-camera
-
+import * as Location from "expo-location";
+import MapPopup from './MapPopup';
 
 
 
@@ -30,6 +31,10 @@ const CreateReportScreen = () => {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [ownerName, setOwnerName] = useState('');
   const [location, setLocation] = useState('');
+  const [currentLocation, setCurrentLocation] = useState(null);
+  const [isMapVisible, setIsMapVisible] = useState(false);
+  const [address, SetAddress] = useState('');
+  const [selectedLocation, setSelectedLocation] = useState(null);
   const [donkeyCount, setDonkeyCount] = useState(0);
   const [maleAdultCount, setMaleAdultCount] = useState(0);
   const [maleCastratedCount, setMaleCastratedCount] = useState(0);
@@ -63,6 +68,56 @@ const CreateReportScreen = () => {
       setCameraPermission(cameraPermissionStatus.status === 'granted');
     })();
   }, []);
+
+  useEffect(() => {
+    const getPermissions = async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        console.log("Please grant location permissions");
+        return;
+      }
+
+      let currentLocation = await Location.getCurrentPositionAsync({});
+      setLocation(currentLocation);
+      console.log("Location:");
+      console.log(currentLocation);
+    };
+    getPermissions();
+  }, []);
+
+  const geocode = async () => {
+    const geocodedLocation = await Location.geocodeAsync(address);
+    console.log("Geocoded Address:");
+    console.log(geocodedLocation);
+  };
+
+  const reverseGeocode = async () => {
+    const reverseGeocodedAddress = await Location.reverseGeocodeAsync({
+      longitude: location.coords.longitude,
+      latitude: location.coords.latitude
+    });
+
+    console.log("Reverse Geocoded:");
+    console.log(reverseGeocodedAddress);
+  };
+
+  const openMapPopup = () => {
+    setIsMapVisible(true);
+  };
+
+  const closeMapPopup = () => {
+    setIsMapVisible(false);
+  };
+
+  const handleLocationSelect = (location) => {
+    setSelectedLocation(location);
+  };
+
+  const handleUseLocation = () => {
+    if (selectedLocation) {
+      onLocationSelect(selectedLocation, currentAddress);
+    }
+  };
 
   const handleImagePick = async () => {
     try {
@@ -238,6 +293,25 @@ const CreateReportScreen = () => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <Button title="Open Map" onPress={openMapPopup} />
+
+      {currentLocation && (
+        <Text>Selected Location: {currentLocation.latitude}, {currentLocation.longitude}</Text>
+        
+      )}
+
+      {selectedLocation && (
+        <Text>Selected Location: {selectedLocation.latitude}, {selectedLocation.longitude}</Text>
+        
+      )}
+      <MapPopup
+        isVisible={isMapVisible}
+        onClose={closeMapPopup}
+        onLocationSelect={handleUseLocation}
+        
+      />
+      </View>
       <TouchableOpacity style={styles.datePicker} onPress={() => setShowDatePicker(true)}>
         <Text style={styles.dateText}><Text style={styles.label}>Date</Text> {date.toDateString()}</Text>
         
@@ -266,8 +340,8 @@ const CreateReportScreen = () => {
         <TextInput
           style={styles.input}
           placeholder="Enter the location"
-          value={location}
-          onChangeText={setLocation}
+          value={address}
+          onChangeText={SetAddress}
         />
       </View>
 
@@ -276,14 +350,16 @@ const CreateReportScreen = () => {
         <View style={styles.counterContainer}>
           <TouchableOpacity
             style={styles.counterButton}
-            onPress={() => setDonkeyCount(donkeyCount > 0 ? donkeyCount - 1 : 0)}
+            onPress={reverseGeocode}
+            // onPress={() => setDonkeyCount(donkeyCount > 0 ? donkeyCount - 1 : 0)}
           >
             <Ionicons name="remove" size={20} color="white" />
           </TouchableOpacity>
           <Text style={styles.counterText}>{donkeyCount}</Text>
           <TouchableOpacity
             style={styles.counterButton}
-            onPress={() => setDonkeyCount(donkeyCount + 1)}
+            onPress={geocode}
+            // onPress={() => setDonkeyCount(donkeyCount + 1)}
           >
             <Ionicons name="add" size={20} color="white" />
           </TouchableOpacity>
