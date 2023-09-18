@@ -6,11 +6,11 @@ import { createMaterialBottomTabNavigator } from '@react-navigation/material-bot
 
 import LoginScreen from './screens/LoginScreen';
 import HomeScreen from './screens/HomeScreen';
-import CreateAccount from './screens/CreateAccountScreens';
+import CreateAccount from './screens/CreateAccountScreen';
 import CreateReportScreen from './screens/CreateReportScreen';
 import ViewReportsScreen from './screens/ViewReportsScreen';
 import ReportDetailsScreen from './screens/ReportDetailsScreen';
-import OnboardingScreen from './screens/OnboardingScreenz';
+import OnboardingScreen from './screens/OnboardingScreen';
 import SettingsScreen from './screens/SettingsScreen';
 import NotificationsScreen from './screens/NotificationsScreen';
 import LeaderboardScreen from './screens/LeaderboardScreen';
