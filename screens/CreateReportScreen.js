@@ -91,6 +91,13 @@ const CreateReportScreen = ({ route }) => {
   };
 
   //A function to pick an image and validate permission.
+  useEffect(() => {
+    (async () => {
+      const cameraPermissionStatus = await Camera.requestCameraPermissionsAsync();
+      setCameraPermission(cameraPermissionStatus.status === 'granted');
+    })();
+  }, []);
+
   const handleImagePick = async () => {
     try {
       const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -101,7 +108,7 @@ const CreateReportScreen = ({ route }) => {
         );
         return;
       }
-      //Store the selected image
+
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
