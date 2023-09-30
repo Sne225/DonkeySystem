@@ -9,7 +9,8 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 
 
 
-const ViewReportScreen = ( {reportId}) => {
+const ViewReportScreen = ( {route}) => {
+  const { userName, userSurname } = route.params;
   const [reports, setReports] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const navigation = useNavigation();
@@ -121,7 +122,7 @@ const ViewReportScreen = ( {reportId}) => {
       )}
       <TouchableOpacity
         style={styles.addButton}
-        onPress={() => navigation.navigate('CreateReport')}
+        onPress={() => navigation.navigate('CreateReport', {userName, userSurname})}
       >
          
         <Text style={styles.addButtonText}><Ionicons name="add-circle-outline" size={17} color="white" />  Add New Report</Text>

@@ -24,7 +24,7 @@ const HomeScreen = () => {
   const navigation = useNavigation();
 
   const [userName, setUserName] = useState('');
-  const [userCity, setUserCity] = useState('');
+  const [userSurname, setUserSurname] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [reportCount, setReportCount] = useState(0);
   const isFocused = useIsFocused();
@@ -52,7 +52,7 @@ const HomeScreen = () => {
         if (userSnapshot.exists()) {
           const userData = userSnapshot.data();
           setUserName(userData.name);
-          setUserCity(userData.city);
+          setUserSurname(userData.surname);
 
           const reportsCollectionRef = collection(userRef, 'reports');
           const reportsSnapshot = await getDocs(reportsCollectionRef);
@@ -73,11 +73,11 @@ const HomeScreen = () => {
 
 
   const handleCreateReport = () => {
-    navigation.navigate('CreateReport');
+    navigation.navigate('CreateReport', {userName, userSurname});
   };
 
   const handleViewReports = () => {
-    navigation.navigate('ViewReports');
+    navigation.navigate('ViewReports', {userName, userSurname});
   };
 
   const handleSettings = () => {

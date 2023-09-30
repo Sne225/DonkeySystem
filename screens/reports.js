@@ -20,26 +20,16 @@ import { useNavigation } from '@react-navigation/native';
 import Modal from 'react-native-modal';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Camera } from 'expo-camera'; // Import Camera from expo-camera
-import * as Location from "expo-location";
-import MapPopup from './MapPopup';
-import axios from 'axios';
 
 
 
 
-//Functional Component of CreateReport Screen
-const CreateReportScreen = ({ route }) => {
-  const { userName, userSurname } = route.params;
-  //States for the screen
+const CreateReportScreen = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [date, setDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [ownerName, setOwnerName] = useState('');
   const [location, setLocation] = useState('');
-  const [currentLocation, setCurrentLocation] = useState(null);
-  const [isMapVisible, setIsMapVisible] = useState(false);
-  // const [address, SetAddress] = useState('');
-  const [selectedLocation, setSelectedLocation] = useState(null);
   const [donkeyCount, setDonkeyCount] = useState(0);
   const [maleAdultCount, setMaleAdultCount] = useState(0);
   const [maleCastratedCount, setMaleCastratedCount] = useState(0);
@@ -61,14 +51,12 @@ const CreateReportScreen = ({ route }) => {
   const [cameraRef, setCameraRef] = useState(null);
   const navigation = useNavigation();
 
-  //Shows current date but can be changed upon click
-  const handleDateChange = (event, selectedDate) => {2 
+  const handleDateChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
     setShowDatePicker(false);
     setDate(currentDate);
   };
 
-  //A hook that requests camera permission
   useEffect(() => {
     (async () => {
       const cameraPermissionStatus = await Camera.requestCameraPermissionsAsync();
@@ -76,21 +64,6 @@ const CreateReportScreen = ({ route }) => {
     })();
   }, []);
 
-  //Open map
-  const openMapPopup = () => {
-    setIsMapVisible(true);
-  };
- 
-  //Close map
-  const closeMapPopup = () => {
-    setIsMapVisible(false);
-  };
-
-  const handleLocationSelect = (location) => {
-    setSelectedLocation(location);
-  };
-
-  //A function to pick an image and validate permission.
   const handleImagePick = async () => {
     try {
       const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -101,7 +74,7 @@ const CreateReportScreen = ({ route }) => {
         );
         return;
       }
-      //Store the selected image
+
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
@@ -138,16 +111,6 @@ const CreateReportScreen = ({ route }) => {
     setPhoto(null);
   };
 
-  const calculateTotalDonkeyCount = () => {
-    const total = maleAdultCount + maleCastratedCount + femaleAdultCount + maleFoalCount + femaleFoalCount;
-    setDonkeyCount(total);
-  };
-  
-
-  useEffect(() => {
-    calculateTotalDonkeyCount();
-  }, [maleAdultCount, maleCastratedCount, femaleAdultCount, maleFoalCount, femaleFoalCount]);
-
   const storage = getStorage();
 
   const createReportCollection = async (userId) => {
@@ -163,22 +126,16 @@ const CreateReportScreen = ({ route }) => {
     return reportCollectionRef;
   };
 
-  //Show alert for Observation completion
-  useEffect(() => {
-    if (poorHealth) {
-      const msg = "Please complete the signs of poor health on the observation field.";
-      Alert.alert("Complete Observation Field", msg);
-    }
-  }, [poorHealth]);  
-
-
-
+  const handleSubmit = async () => {
     // Save the report data to Firestore
-    const handleSubmit = async () => {
-    //Loading
+
     setIsLoading(true);
 
-    
+    // if (!date || !location || !ownerName) {
+    //   Alert.alert('Missing Fields', 'Please fill in all required fields.');
+    //   setIsLoading(false);
+    //   return;
+    // }
 
 
   // Validate the required fields and store the missing field names in an array
@@ -212,7 +169,6 @@ const CreateReportScreen = ({ route }) => {
         console.error('Error reading or uploading image:', error);
       }
     }
-   
   
     const reportData = {
       date: Timestamp.fromDate(new Date(date)), // Convert date to Firestore timestamp
@@ -234,13 +190,9 @@ const CreateReportScreen = ({ route }) => {
       followUpDate: followUpDate ? Timestamp.fromDate(new Date(followUpDate)) : null,
     };
   
-    if (contactVets) {
-      await sendEmail(reportData);
-    }
     // Save the report data to Firestore with the current user's ID
     const currentUser = auth.currentUser;
     const userId = currentUser ? currentUser.uid : null;
-
   
     if (userId) {
       try {
@@ -270,8 +222,6 @@ const CreateReportScreen = ({ route }) => {
         setFollowUpDate(null);
       } catch (error) {
         console.error('Error creating report:', error);
-        
-        setIsLoading(false);
         // Handle any error cases
       } finally {
         // isLoading to false when the submission process completes
@@ -286,73 +236,8 @@ const CreateReportScreen = ({ route }) => {
     }
   };
 
-  const sendEmail = async (reportData) => {
-    
-      // Convert the report data to a formatted string
-      const reportDataString = JSON.stringify(reportData, null, 2);
-      const uniqueId = Date.now().toString();
-      const subject = `Emergency Notification - ${uniqueId}`;
-  
-      const response = await axios.post(
-        'https://api.sendinblue.com/v3/smtp/email',
-        {
-          sender: { name: 'DCW APP Notification', email: 'DCW.Userreport@gmail.com' },
-          to: [{ email: 'protectorpeace@gmail.com' }],
-          subject: subject,
-          htmlContent: `
-            <html>
-              <body>
-                <p>Good day, I hope this email finds you well.</p><br>
-                <p>Please note this report requires attention and a <span style="font-weight:bold">Veterinarian has been requested</span>. Have a look at the report data below:</p><br>
-                
-                <p> <span style="font-weight:bold">Name of Worker:</span> ${userName} ${userSurname}</p>
-                <p> <span style="font-weight:bold">Date:</span> ${date}</p>
-                <p> <span style="font-weight:bold">Location of Donkey Owner:</span> ${location}</p>
-                <p> <span style="font-weight:bold">Number of Donkeys Owned:</span> ${donkeyCount}</p>
-                <p> <span style="font-weight:bold">Number of Adult Males (Not Castrated):</span> ${maleAdultCount}</p>
-                <p> <span style="font-weight:bold">Number of Adult Castrated Males:</span> ${maleCastratedCount}</p>
-                <p> <span style="font-weight:bold">Number of Adult Females:</span>${femaleAdultCount}</p>
-                <p> <span style="font-weight:bold">Number of Male Foals:</span> ${maleFoalCount}</p>
-                <p> <span style="font-weight:bold">Number of Female Foals:</span> ${femaleFoalCount}</p>
-                
-                <p> <span style="font-weight:bold">Any donkey showing poor signs of health?</span> ${poorHealth}</p><br>
-                
-                <p style="font-weight:bold">Picture of Donkey:
-                <img src="${reportData.photo}" alt="Donkey Image" style="width: 300px; height: 300px; display: block;">
-                <br>
-                
-                <p> <span style="font-weight:bold">Owner Report:</span> ${ownerReports}</p>
-                <p> <span style="font-weight:bold">Observations:</span> ${observations}</p>
-                <p> <span style="font-weight:bold">Advices & Help:</span> ${adviceHelp}</p>
-                <p> <span style="font-weight:bold">Followup Date:</span> ${followUpDate}</p><br>
-                
-                <p>Please respond promptly as the user indicated that a <span style="font-weight:bold">Veterinarian has been requested.</span>.</p>
-                <p>Kind Regards,</P>
-                <p style="font-weight:bold">DCW APP</p>
-                <img src="https://i.ibb.co/Kmbwqf8/icon.png" alt="Donkey Image" style="width: 65px; height: 65px; display: block;">
-              </body>
-            </html>
-          `,
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            'api-key': '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',
-          },
-        }
-      );
-      
-      if (response.status === 201) {
-        console.log('Email sent successfully');
-      } else {
-        console.error('Failed to send email. Response:', response.data);
-      }
-      
-  };
-
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      
       <TouchableOpacity style={styles.datePicker} onPress={() => setShowDatePicker(true)}>
         <Text style={styles.dateText}><Text style={styles.label}>Date</Text> {date.toDateString()}</Text>
         
@@ -365,28 +250,6 @@ const CreateReportScreen = ({ route }) => {
           />
         )}
       </TouchableOpacity>
-
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <TouchableOpacity style={styles.mapButton} onPress={openMapPopup}>
-        <Text style={styles.mapText}>Open Map</Text>
-      </TouchableOpacity>
-
-      {currentLocation && (
-        <Text>Selected Location: {currentLocation.latitude}, {currentLocation.longitude}</Text>
-        
-      )}
-
-      {selectedLocation && (
-        <Text>Selected Location: {selectedLocation.latitude}, {selectedLocation.longitude}</Text>
-        
-      )}
-      <MapPopup
-        isVisible={isMapVisible}
-        onClose={closeMapPopup}
-        onLocationSelect={() => {}}
-        style={styles.mapButton}
-      />
-      </View>
 
       <View style={styles.fieldContainer}>
         <Text style={styles.label}>Name of Donkey Owner</Text>
@@ -410,10 +273,20 @@ const CreateReportScreen = ({ route }) => {
 
       <View style={styles.fieldContainer}>
         <Text style={styles.label}>Number of Donkeys Owned</Text>
-        <View style={styles.totalNumber}>
-    
+        <View style={styles.counterContainer}>
+          <TouchableOpacity
+            style={styles.counterButton}
+            onPress={() => setDonkeyCount(donkeyCount > 0 ? donkeyCount - 1 : 0)}
+          >
+            <Ionicons name="remove" size={20} color="white" />
+          </TouchableOpacity>
           <Text style={styles.counterText}>{donkeyCount}</Text>
-         
+          <TouchableOpacity
+            style={styles.counterButton}
+            onPress={() => setDonkeyCount(donkeyCount + 1)}
+          >
+            <Ionicons name="add" size={20} color="white" />
+          </TouchableOpacity>
         </View>
       </View>
 
@@ -518,8 +391,15 @@ const CreateReportScreen = ({ route }) => {
         <Text style={styles.label}>Are There Donkeys Showing Signs of Poor Health?</Text>
         <Switch value={poorHealth} onValueChange={setPoorHealth} />
       </View>
-      
 
+      {/* Photo Field
+      <View style={styles.fieldContainer}>
+        <Text style={styles.label}>Take a Photo of the Donkey</Text>
+        
+        {/* <TouchableOpacity style={styles.photoButton} onPress={handleRemovePhoto}>
+                <Ionicons name="close-circle-outline" size={24} color="white" />
+              </TouchableOpacity>
+      </View>*/}
 
       {/* Camera Field */}
       <View style={styles.fieldContainer}>
@@ -707,19 +587,6 @@ const styles = {
     borderRadius: 5,
     padding: 10,
   },
-  mapButton: {
-    borderWidth: 1,
-    borderColor: '#fff',
-    borderRadius: 15,
-    paddingVertical: 10,
-    paddingHorizontal: 15,
-    marginBottom: 15,
-    backgroundColor: "#009387",
-    color: "white",
-  },
-  mapText: {
-    color: "#fff"
-  },
   datePicker: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -733,16 +600,6 @@ const styles = {
   },
   dateText: {
     fontSize: 16,
-  },
-  totalNumber: {
-    borderWidth: 1,
-    borderColor: '#009387',
-    borderRadius: 15,
-    paddingVertical: 5,
-    paddingHorizontal: 25,
-    width: "23%",
-    marginBottom: -8,
-    marginLeft: 3,
   },
   counterContainer: {
     flexDirection: 'row',
