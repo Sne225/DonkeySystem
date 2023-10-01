@@ -31,11 +31,14 @@ import axios from 'axios';
 const CreateReportScreen = ({ route }) => {
   const { userName, userSurname } = route.params;
   //States for the screen
+  const [errorMsg, setErrorMsg] = useState(null);
+  const [address, setAddress] = useState('');
+
   const [isLoading, setIsLoading] = useState(false);
   const [date, setDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [ownerName, setOwnerName] = useState('');
-  const [location, setLocation] = useState('');
+  const [location, setLocation] = useState({ latitude: '', longitude: '' });
   const [currentLocation, setCurrentLocation] = useState(null);
   const [isMapVisible, setIsMapVisible] = useState(false);
   // const [address, SetAddress] = useState('');
@@ -85,6 +88,58 @@ const CreateReportScreen = ({ route }) => {
   const closeMapPopup = () => {
     setIsMapVisible(false);
   };
+
+
+
+  useEffect(() => {
+    // Function to fetch location data
+
+    const fetchLocation = async () => {
+      try {
+        let { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== 'granted') {
+          setErrorMsg('Permission to access location was denied');
+          return;
+        }
+
+        let locationData = await Location.getCurrentPositionAsync({});
+        setLocation({
+          latitude: locationData.coords.latitude.toString(),
+          longitude: locationData.coords.longitude.toString(),
+        });
+
+        // Reverse geocode the coordinates to get the address
+        let addressData = await Location.reverseGeocodeAsync({
+          latitude: locationData.coords.latitude,
+          longitude: locationData.coords.longitude,
+        });
+
+        // Extract and set the address details
+        setAddress({
+          street: addressData[0].street,
+          postalCode: addressData[0].postalCode,
+          city: addressData[0].city,
+          region: addressData[0].region,
+          country: addressData[0].country,
+        });
+      } catch (error) {
+        console.error('Error fetching location:', error);
+        setAddress({ street: '', postalCode: '', city: '', region: '', country: '' });
+      }
+    };
+
+    // Fetch location immediately when the component mounts
+    fetchLocation();
+
+    // Set up an interval to refresh location every 30 seconds (adjust as needed)
+    const refreshInterval = setInterval(() => {
+      fetchLocation();
+    }, 10000); // 10 seconds in milliseconds
+
+    // Clean up the interval when the component unmounts
+    return () => clearInterval(refreshInterval);
+  }, []);
+
 
   const handleLocationSelect = (location) => {
     setSelectedLocation(location);
@@ -225,6 +280,7 @@ const CreateReportScreen = ({ route }) => {
       date: Timestamp.fromDate(new Date(date)), // Convert date to Firestore timestamp
       ownerName,
       location,
+      address,
       donkeyCount: Number(donkeyCount), // Convert to a number if needed
       maleAdultCount: Number(maleAdultCount),
       maleCastratedCount: Number(maleCastratedCount),
@@ -261,6 +317,7 @@ const CreateReportScreen = ({ route }) => {
         setDate(new Date());
         setOwnerName('');
         setLocation('');
+        setAddress('');
         setDonkeyCount(0);
         setMaleAdultCount(0);
         setMaleCastratedCount(0);
@@ -312,9 +369,14 @@ const CreateReportScreen = ({ route }) => {
                 <p>Good day, I hope this email finds you well.</p><br>
                 <p>Please note this report requires attention and a <span style="font-weight:bold">Veterinarian has been requested</span>. Have a look at the report data below:</p><br>
                 
+                <p> <span style="font-weight:bold">Report Submitted Time:</span> ${reportData.date.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                 <p> <span style="font-weight:bold">Name of Worker:</span> ${userName} ${userSurname}</p>
-                <p> <span style="font-weight:bold">Date:</span> ${date}</p>
-                <p> <span style="font-weight:bold">Location of Donkey Owner:</span> ${location}</p>
+                <p> <span style="font-weight:bold">Date:</span> ${reportData.date.toDate().toDateString()}</p>
+                <p> <span style="font-weight:bold">Location of Donkey Owner:</span> Latitude: ${reportData.location.latitude}, 
+                Longitude: ${reportData.location.longitude}</p>
+                <p> <span style="font-weight:bold">Reverse Geocoded Location:</span> ${reportData.address.street}, 
+                ${reportData.address.city}, ${reportData.address.postalCode}, ${reportData.address.region}, 
+                ${reportData.address.country}</p>
                 <p> <span style="font-weight:bold">Number of Donkeys Owned:</span> ${donkeyCount}</p>
                 <p> <span style="font-weight:bold">Number of Adult Males (Not Castrated):</span> ${maleAdultCount}</p>
                 <p> <span style="font-weight:bold">Number of Adult Castrated Males:</span> ${maleCastratedCount}</p>
@@ -331,7 +393,7 @@ const CreateReportScreen = ({ route }) => {
                 <p> <span style="font-weight:bold">Owner Report:</span> ${ownerReports}</p>
                 <p> <span style="font-weight:bold">Observations:</span> ${observations}</p>
                 <p> <span style="font-weight:bold">Advices & Help:</span> ${adviceHelp}</p>
-                <p> <span style="font-weight:bold">Followup Date:</span> ${followUpDate}</p><br>
+                <p> <span style="font-weight:bold">Followup Date:</span> ${reportData.followUpDate.toDate().toDateString()}</p><br>
                 
                 <p>Please respond promptly as the user indicated that a <span style="font-weight:bold">Veterinarian has been requested.</span>.</p>
                 <p>Kind Regards,</P>
@@ -356,6 +418,9 @@ const CreateReportScreen = ({ route }) => {
       }
       
   };
+
+  const fullAddress = `${address.street}, ${address.city}, ${address.region}, ${address.postalCode}, ${address.country}`;
+
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -396,7 +461,7 @@ const CreateReportScreen = ({ route }) => {
       </View>
 
       <View style={styles.fieldContainer}>
-        <Text style={styles.label}>Name of Donkey Owner</Text>
+      <Text style={styles.label}>Name of Donkey Owner</Text>
         <TextInput
           style={styles.input}
           placeholder="Enter the name"
@@ -407,12 +472,31 @@ const CreateReportScreen = ({ route }) => {
 
       <View style={styles.fieldContainer}>
         <Text style={styles.label}>Location of Donkey Owner Property</Text>
+        {errorMsg ? (
+        <Text>{errorMsg}</Text>
+      ) : (
         <TextInput
           style={styles.input}
           placeholder="Enter the location"
-          value={location}
-          onChangeText={setLocation}
+          value={`Latitude: ${location.latitude}, Longitude: ${location.longitude}`}
+          editable={false} // Set to false to make it read-only
         />
+      )}
+      </View>
+
+      <View style={styles.fieldContainer}>
+        <Text style={styles.label}>Reverse Geocoded Address</Text>
+        {errorMsg ? (
+        <Text>{errorMsg}</Text>
+      ) : (
+        <TextInput
+            style={styles.input}
+            placeholder="Address"
+            value={`${fullAddress}`}
+            multiline={true}
+            editable={false}
+          />
+      )}
       </View>
 
       <View style={styles.fieldContainer}>

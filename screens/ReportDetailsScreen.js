@@ -133,8 +133,13 @@ const ReportDetailsScreen = () => {
       <Text style={styles.value}>{reportData.date.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</Text>
       <Text style={styles.label}>Date:</Text>
       <Text style={styles.value}>{reportData.date.toDate().toDateString()}</Text>
-      <Text style={styles.label}>Location:</Text>
-      <Text style={styles.value}>{reportData.location}</Text>
+      <Text style={styles.label}>Donkey Owner Location:</Text>
+      <Text style={styles.value}>Latitude: {reportData.location.latitude}{'\n'}
+        Longitude: {reportData.location.longitude}</Text>
+      <Text style={styles.label}>Reverse Geocoded Location:</Text>
+      <Text style={styles.value}>
+      {`${reportData.address.street}, ${reportData.address.city}, ${reportData.address.postalCode}, ${reportData.address.region}, ${reportData.address.country}`}
+      </Text>
       <Text style={styles.label}>Owner Name:</Text>
       <Text style={styles.value}>{reportData.ownerName}</Text>
       <Text style={styles.label}>Donkey Count:</Text>
