@@ -398,7 +398,7 @@ const CreateReportScreen = ({ route }) => {
                 <p>Please respond promptly as the user indicated that a <span style="font-weight:bold">Veterinarian has been requested.</span>.</p>
                 <p>Kind Regards,</P>
                 <p style="font-weight:bold">DCW APP</p>
-                <img src="https://i.ibb.co/Kmbwqf8/icon.png" alt="Donkey Image" style="width: 65px; height: 65px; display: block;">
+                <img src="https://i.ibb.co/Kmbwqf8/icon.png" alt="Donkey Image" style="width: 45px; height: 45px; display: block;">
               </body>
             </html>
           `,
