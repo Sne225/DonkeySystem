@@ -3,7 +3,6 @@ import { StyleSheet, Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { TourGuideProvider } from 'rn-tourguide';
-import { Toast } from 'react-native-toast-message'; // Import the Toast component
 
 import LoginScreen from './screens/LoginScreen';
 import HomeScreen from './screens/HomeScreen';
@@ -47,7 +46,6 @@ export default function App() {
         <Stack.Screen name="Notifications" component={NotificationsScreen} options={{headerShown: false,}} />
         <Stack.Screen name="Leaderboard" component={LeaderboardScreen} options={{headerShown: false,}} />
       </Stack.Navigator>
-      <Toast ref={(ref) => Toast.setRef(ref)} /> {/* Initialize the Toast component */}
     </NavigationContainer>
     </TourGuideProvider>
   );
