@@ -9,7 +9,8 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 
 
 
-const ViewReportScreen = ( {reportId}) => {
+const ViewReportScreen = ( {route}) => {
+  const { userName, userSurname } = route.params;
   const [reports, setReports] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const navigation = useNavigation();
@@ -53,41 +54,6 @@ const ViewReportScreen = ( {reportId}) => {
       </View>
     );
   }
-
-  // const handleDeleteReport = async (reportId) => {
-  //   // Show an alert to confirm the deletion
-  //   Alert.alert(
-  //     'Confirm Deletion',
-  //     'Are you sure you want to delete this report?',
-  //     [
-  //       {
-  //         text: 'Cancel',
-  //         style: 'cancel',
-  //       },
-  //       {
-  //         text: 'Delete',
-  //         style: 'destructive',
-  //         onPress: async () => {
-  //           try {
-  //             // Delete the report from Firestore
-  //             await deleteDoc(collection(firestore, 'users', auth.currentUser?.uid, 'reports', reportId));
-
-  //             // Remove the deleted report from the local state
-  //             setReports((prevReports) => prevReports.filter((report) => report.id !== reportId));
-
-  //             // Show a success message (optional)
-  //             Alert.alert('Report Deleted', 'The report has been successfully deleted.');
-  //           } catch (error) {
-  //             console.error('Error deleting report:', error);
-  //             // Show an error message (optional)
-  //             Alert.alert('Error', 'An error occurred while deleting the report. Please try again later.');
-  //           }
-  //         },
-  //       },
-  //     ],
-  //     { cancelable: true }
-  //   );
-  // };
 
   const handleDeleteReport = async (reportId) => {
     // Show an alert to confirm the deletion
@@ -156,7 +122,7 @@ const ViewReportScreen = ( {reportId}) => {
       )}
       <TouchableOpacity
         style={styles.addButton}
-        onPress={() => navigation.navigate('CreateReport')}
+        onPress={() => navigation.navigate('CreateReport', {userName, userSurname})}
       >
          
         <Text style={styles.addButtonText}><Ionicons name="add-circle-outline" size={17} color="white" />  Add New Report</Text>
@@ -170,7 +136,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     backgroundColor: '#FFF',
-    justifyContent: 'space-between', // Align children vertically with space in-between
+    justifyContent: 'space-between',
   },
   heading: {
     fontSize: 24,
@@ -186,11 +152,11 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     padding: 15,
     marginBottom: 10,
-    flexDirection: 'row-reverse', // Place the bin icon on the right end
+    flexDirection: 'row-reverse',
     alignItems: 'center',
   },
   deleteIcon: {
-    marginRight: 15, // Add a margin on the left side of the icon for spacing
+    marginRight: 15,
   },
   reportData: {
     flex: 1,
@@ -212,13 +178,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 20,
-    flexDirection: 'row', // Align icon and text horizontally
+    flexDirection: 'row',
   },
   addButtonText: {
     color: '#FFF',
     fontSize: 16,
     fontWeight: 'bold',
-    marginLeft: 10, // Add some space between the icon and text
+    marginLeft: 10,
   },
   noReportsText: {
     fontSize: 18,

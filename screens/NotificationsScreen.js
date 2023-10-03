@@ -17,20 +17,21 @@ const NotificationsScreen = () => {
       <Text style={styles.heading}>Your Notifications</Text>
 
       <View style={styles.lottie}>
-      <Text style={styles.noReportsText}>You currently do not have any notifications :) </Text>
-          <LottieView source={require('../assets/animations/notifications.json')} autoPlay loop />
+      <Text style={styles.noReportsText}>You currently do not have any notifications. </Text>
+          <LottieView source={require('../assets/animations/notifications.json')}
+          autoPlay loop />
     </View>
       <TouchableOpacity
-        style={styles.addButton}
+        style={styles.backButton}
         onPress={() => navigation.navigate('Home')}
       >
-         
-        <Text style={styles.addButtonText}><Ionicons name="arrow-back" size={17} color="white" />  Go Back</Text>
+
+        <Text style={styles.backButtonText}><Ionicons name="arrow-back" size={17} color="white" />  Go Back</Text>
       </TouchableOpacity>
     </View>
   );
 };
-    
+
 
 export default NotificationsScreen
 
@@ -47,13 +48,7 @@ const styles = StyleSheet.create({
     color: '#009387',
     marginTop: 20,
   },
-  reportTitle: {
-    color: '#FFF',
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 5,
-  },
-  addButton: {
+  backButton: {
     backgroundColor: '#009387',
     borderRadius: 5,
     padding: 15,
@@ -62,15 +57,16 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     flexDirection: 'row', // Align icon and text horizontally
   },
-  addButtonText: {
+  backButtonText: {
     color: '#FFF',
     fontSize: 16,
     fontWeight: 'bold',
     marginLeft: 10, // Add some space between the icon and text
   },
   lottie:{
-    width: width*0.9,
-    height: width
+    width: width*0.9-50,
+    height: width,
+    marginLeft: 30,
 },
 noReportsText: {
   fontSize: 18,

@@ -2,15 +2,15 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
+import { TourGuideProvider } from 'rn-tourguide';
 
 import LoginScreen from './screens/LoginScreen';
 import HomeScreen from './screens/HomeScreen';
-import CreateAccount from './screens/CreateAccountScreens';
+import CreateAccount from './screens/CreateAccountScreen';
 import CreateReportScreen from './screens/CreateReportScreen';
 import ViewReportsScreen from './screens/ViewReportsScreen';
 import ReportDetailsScreen from './screens/ReportDetailsScreen';
-import OnboardingScreen from './screens/OnboardingScreenz';
+import OnboardingScreen from './screens/OnboardingScreen';
 import SettingsScreen from './screens/SettingsScreen';
 import NotificationsScreen from './screens/NotificationsScreen';
 import LeaderboardScreen from './screens/LeaderboardScreen';
@@ -18,11 +18,10 @@ import LeaderboardScreen from './screens/LeaderboardScreen';
 
 
 const Stack = createNativeStackNavigator();
-const Tab = createMaterialBottomTabNavigator();
-
 
 export default function App() {
   return (
+    <TourGuideProvider>
     <NavigationContainer> 
       <Stack.Navigator screenOptions={{
           headerStyle: {
@@ -48,6 +47,7 @@ export default function App() {
         <Stack.Screen name="Leaderboard" component={LeaderboardScreen} options={{headerShown: false,}} />
       </Stack.Navigator>
     </NavigationContainer>
+    </TourGuideProvider>
   );
 }
 
