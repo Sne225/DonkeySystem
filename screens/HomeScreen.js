@@ -8,6 +8,7 @@ import { useFonts, Inter_100Thin, Inter_200ExtraLight, Inter_300Light,
   Inter_400Regular, Inter_500Medium, Inter_600SemiBold, Inter_700Bold,
   Inter_800ExtraBold, Inter_900Black } from '@expo-google-fonts/inter';
 import { TourGuideZone, useTourGuideController, TourGuideZoneByPosition } from 'rn-tourguide';
+import LottieView from 'lottie-react-native';
 
 const HomeScreen = () => {
 
@@ -111,11 +112,14 @@ const HomeScreen = () => {
     navigation.navigate('Leaderboard');
   }
 
+  const handleAnimationSpeed = 2;
+
   if (isLoading) {
       return (
         <View style={styles.container}>
-          <Text style={styles.loadingText}>Loading...</Text>
-          <ActivityIndicator size="large" color="white" />
+         <Text style={styles.loadingText}>Loading...</Text>
+          <LottieView source={require('../assets/animations/loader.json')}
+          autoPlay loop speed={handleAnimationSpeed} />
         </View>
       );
     }
@@ -369,12 +373,11 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     fontWeight: "bold",
-    fontSize: 18,
+    fontSize: 20,
     color: 'white',
     justifyContent: 'center',
-    marginBottom: 20,
+    marginBottom: 210,
     left: 124,
-
   },
   reportsLabel: {
     fontSize: 16,
