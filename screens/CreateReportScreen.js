@@ -33,7 +33,6 @@ const CreateReportScreen = ({ route }) => {
   //States for the screen
   const [errorMsg, setErrorMsg] = useState(null);
   const [address, setAddress] = useState('');
-
   const [isLoading, setIsLoading] = useState(false);
   const [date, setDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -41,7 +40,6 @@ const CreateReportScreen = ({ route }) => {
   const [location, setLocation] = useState({ latitude: '', longitude: '' });
   const [currentLocation, setCurrentLocation] = useState(null);
   const [isMapVisible, setIsMapVisible] = useState(false);
-  // const [address, SetAddress] = useState('');
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [donkeyCount, setDonkeyCount] = useState(0);
   const [maleAdultCount, setMaleAdultCount] = useState(0);
