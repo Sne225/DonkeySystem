@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Image} from 'react-native';
 import { collection, getDocs, query, orderBy, where, Timestamp } from 'firebase/firestore';
 import { auth, firestore } from '../firebase'; // Replace with your Firebase configuration import
 import LottieView from 'lottie-react-native';
@@ -8,7 +8,8 @@ import { parse, startOfWeek, endOfWeek, startOfMonth, endOfMonth } from 'date-fn
 import Tooltip from 'react-native-walkthrough-tooltip';
 
 
-export default function LeaderboardScreen() {
+const LeaderboardScreen = () => {
+
   const [leaderboardData, setLeaderboardData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState(null);
@@ -132,11 +133,9 @@ export default function LeaderboardScreen() {
       // Sort filteredData by reportCount in descending order
       filteredData.sort((a, b) => b.reportCount - a.reportCount);
   
-      leaderboardData.forEach((user, index) => {
-        const foundUser = filteredData.find((item) => item.userId === user.userId);
-        if (foundUser) {
-          user.position = index + 1;
-        }
+      // Assign ranks based on the sorted order
+      filteredData.forEach((user, index) => {
+        user.position = index + 1; // 1-based ranking
       });
   
       setLeaderboardData(filteredData);
@@ -144,6 +143,7 @@ export default function LeaderboardScreen() {
       console.error(`Error fetching ${selectedInterval} leaderboard data:`, error);
     }
   };
+  
   
 
   if (isLoading) {
@@ -190,6 +190,7 @@ export default function LeaderboardScreen() {
             Weekly
           </Text>
         </TouchableOpacity>
+
         <TouchableOpacity
           style={[
             styles.button,
@@ -201,6 +202,7 @@ export default function LeaderboardScreen() {
             Monthly
           </Text>
         </TouchableOpacity>
+        
         <TouchableOpacity
           style={[
             styles.button,
@@ -215,14 +217,11 @@ export default function LeaderboardScreen() {
       </View>
       
       <View style={styles.lottieContainer}>
-        {/* Render the LottieView */}
-        <LottieView
-          source={require('../assets/animations/win.json')}
-          autoPlay
-          loop={false}
-          speed={handleAnimationSpeed2}
-          style={styles.lottie}
+        <Image
+          source={require('../assets/animations/crown.png')}
+          style={{ width: 120, height: 120, marginTop: -15, }}
         />
+
       </View>
       <ScrollView scrollToOverflowEnabled showsVerticalScrollIndicator={false} style={styles.leaderboardContainer}>
         {leaderboardData.map((user, index) => (
@@ -286,15 +285,7 @@ const styles = StyleSheet.create({
   },
   lottieContainer: {
     alignItems: 'center',
-    marginTop: 80, 
-    marginBottom: 20,
     
-  },
-  lottie: {
-    position: 'absolute',
-    top: -105,
-    width: 300, 
-    height: 300,
   },
   header: {
     flexDirection: 'row',
@@ -381,3 +372,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 });
+
+export default LeaderboardScreen;
