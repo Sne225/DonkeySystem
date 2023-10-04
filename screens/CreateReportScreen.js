@@ -421,7 +421,8 @@ const CreateReportScreen = ({ route }) => {
 
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView  contentContainerStyle={styles.container}
+    showsVerticalScrollIndicator={false}>
       
       <TouchableOpacity style={styles.datePicker} onPress={() => setShowDatePicker(true)}>
         <Text style={styles.dateText}><Text style={styles.label}>Date</Text> {date.toDateString()}</Text>
