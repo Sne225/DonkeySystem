@@ -167,8 +167,8 @@ const LeaderboardScreen = () => {
         <Tooltip
           isVisible={tooltipVisible}
           content={<Text>This section is the leaderboard, where workers like yourself compete with each other
-            workers to become in the top 3 Donkey Care Worker! The top 3 workers will be selected and win awards!
-            Good luck!
+            workers to become in the top 3 Donkey Care Worker! The top 3 workers will be selected and win prizes and awards!
+            Good luck!🐴
             </Text>}
           placement="bottom" // You can change this to 'top', 'left', or 'right' as needed
           onClose={() => setTooltipVisible(false)}
