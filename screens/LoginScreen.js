@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Alert} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { Feather } from '@expo/vector-icons'; // Assuming you have the vector icons library installed
+import { Feather } from '@expo/vector-icons';
 import Modal from 'react-native-modal';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 import {auth } from '../firebase';
 
 const facebookIcon = require('../assets/images/facebook.png');
@@ -23,9 +23,9 @@ const LoginScreen = () => {
 
   const handleSignIn = async () => {
     {
-     // const auth = getAuth();
+    
  
-     // Sign in the user using Firebase Authentication
+    
      if (email.trim() === '') {
        Alert.alert('Error Login', 'Please enter your email address 📧');
        return;
@@ -47,6 +47,7 @@ const LoginScreen = () => {
        return;
      }
 
+      // Sign in the user using Firebase Authentication
      await signInWithEmailAndPassword(auth, email, password)
      .then(userCredentials => {
        const user = userCredentials.user;
@@ -58,8 +59,7 @@ const LoginScreen = () => {
    }, 2500);
        console.log('Logged in with:', user.email);
    })
-     // Navigate to the next screen
-     // navigate('NextScreen');
+    
    .catch(error => {
      
      // Handle sign-in error, such as displaying an error message
@@ -170,7 +170,6 @@ const LoginScreen = () => {
         <View style={styles.separator} />
       </View>
 
-      {/* Other components */}
       <View style={styles.socialButtonContainer}>
         <TouchableOpacity style={[styles.socialButton, { borderColor: 'lightgrey' }]} onPress={()=>{}}>
           <View style={styles.iconContainer}>
@@ -204,7 +203,7 @@ const styles = StyleSheet.create({
   
   header: {
     marginBottom: 20,
-    alignItems: 'center', // Center the content horizontally
+    alignItems: 'center',
   },
   heading: {
     fontSize: 30,
@@ -316,7 +315,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     fontSize: 16,
     position: 'relative',
-    top: 100, // Change this value to move the text to a different position from the top
+    top: 80,
     left: 0,
     color: "grey"
    

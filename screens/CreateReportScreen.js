@@ -19,7 +19,7 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { useNavigation } from '@react-navigation/native';
 import Modal from 'react-native-modal';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { Camera } from 'expo-camera'; // Import Camera from expo-camera
+import { Camera } from 'expo-camera';
 import * as Location from "expo-location";
 import MapPopup from './MapPopup';
 import axios from 'axios';
@@ -38,9 +38,7 @@ const CreateReportScreen = ({ route }) => {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [ownerName, setOwnerName] = useState('');
   const [location, setLocation] = useState({ latitude: '', longitude: '' });
-  const [currentLocation, setCurrentLocation] = useState(null);
   const [isMapVisible, setIsMapVisible] = useState(false);
-  const [selectedLocation, setSelectedLocation] = useState(null);
   const [donkeyCount, setDonkeyCount] = useState(0);
   const [maleAdultCount, setMaleAdultCount] = useState(0);
   const [maleCastratedCount, setMaleCastratedCount] = useState(0);
@@ -129,7 +127,7 @@ const CreateReportScreen = ({ route }) => {
     // Fetch location immediately when the component mounts
     fetchLocation();
 
-    // Set up an interval to refresh location every 30 seconds (adjust as needed)
+    // Set up an interval to refresh location every 10 seconds)
     const refreshInterval = setInterval(() => {
       fetchLocation();
     }, 10000); // 10 seconds in milliseconds
@@ -137,11 +135,6 @@ const CreateReportScreen = ({ route }) => {
     // Clean up the interval when the component unmounts
     return () => clearInterval(refreshInterval);
   }, []);
-
-
-  const handleLocationSelect = (location) => {
-    setSelectedLocation(location);
-  };
 
   //A function to pick an image and validate permission.
   useEffect(() => {
@@ -170,9 +163,7 @@ const CreateReportScreen = ({ route }) => {
       });
 
       if (!result.canceled) {
-        // setPhoto(result.uri);
         if (result.assets && result.assets.length > 0) {
-          // The selected image is now accessed through the "assets" array
           const selectedAsset = result.assets[0];
           setPhoto(selectedAsset.uri);
       }
@@ -182,12 +173,14 @@ const CreateReportScreen = ({ route }) => {
     }
   };
 
+  
+
   const handleTakePicture = async () => {
     if (cameraRef) {
       try {
         const photoData = await cameraRef.takePictureAsync({ quality: 0.7 });
         setPhoto(photoData.uri);
-        setShowCamera(false); // Close the camera view after taking a picture
+        setShowCamera(false);
       } catch (error) {
         console.log('Error taking picture:', error);
       }
@@ -219,7 +212,6 @@ const CreateReportScreen = ({ route }) => {
     }
   
     const reportCollectionRef = collection(userDocRef, 'reports');
-    // You don't need to check if the collection exists because it will be created automatically when you add a document to it.
     return reportCollectionRef;
   };
 
@@ -275,11 +267,11 @@ const CreateReportScreen = ({ route }) => {
    
   
     const reportData = {
-      date: Timestamp.fromDate(new Date(date)), // Convert date to Firestore timestamp
+      date: Timestamp.fromDate(new Date(date)),
       ownerName,
       location,
       address,
-      donkeyCount: Number(donkeyCount), // Convert to a number if needed
+      donkeyCount: Number(donkeyCount),
       maleAdultCount: Number(maleAdultCount),
       maleCastratedCount: Number(maleCastratedCount),
       femaleAdultCount: Number(femaleAdultCount),
@@ -306,10 +298,8 @@ const CreateReportScreen = ({ route }) => {
     if (userId) {
       try {
         const reportCollectionRef = await createReportCollection(userId);
-  
-        // const docRef = await setDoc(doc(reportCollectionRef), reportData);
         await setDoc(doc(reportCollectionRef), reportData);
-      console.log('Report created successfully.');
+        console.log('Report created successfully.');
   
         // Reset the form after submitting
         setDate(new Date());
@@ -348,12 +338,15 @@ const CreateReportScreen = ({ route }) => {
     }
   };
 
+  //Email when the "contact vet" radio button is selected
   const sendEmail = async (reportData) => {
-    
-      // Convert the report data to a formatted string
+
       const reportDataString = JSON.stringify(reportData, null, 2);
       const uniqueId = Date.now().toString();
       const subject = `Emergency Notification - ${uniqueId}`;
+      const apiKey = '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'
+      let followUpDate = reportData.followUpDate;
+      
   
       const response = await axios.post(
         'https://api.sendinblue.com/v3/smtp/email',
@@ -364,6 +357,13 @@ const CreateReportScreen = ({ route }) => {
           htmlContent: `
             <html>
               <body>
+              <table width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#ffffff">
+              <tr>
+                <td align="center">
+                  <img src="https://i.ibb.co/dttwddY/Green-Minimalist-Tips-Gradient-Email-Header.png" alt="Banner" width="600" height="200" style="display: block;" />
+                </td>
+                </tr>
+              </table>
                 <p>Good day, I hope this email finds you well.</p><br>
                 <p>Please note this report requires attention and a <span style="font-weight:bold">Veterinarian has been requested</span>. Have a look at the report data below:</p><br>
                 
@@ -372,7 +372,7 @@ const CreateReportScreen = ({ route }) => {
                 <p> <span style="font-weight:bold">Date:</span> ${reportData.date.toDate().toDateString()}</p>
                 <p> <span style="font-weight:bold">Location of Donkey Owner:</span> Latitude: ${reportData.location.latitude}, 
                 Longitude: ${reportData.location.longitude}</p>
-                <p> <span style="font-weight:bold">Reverse Geocoded Location:</span> ${reportData.address.street}, 
+                <p> <span style="font-weight:bold">Actual Address:</span> ${reportData.address.street}, 
                 ${reportData.address.city}, ${reportData.address.postalCode}, ${reportData.address.region}, 
                 ${reportData.address.country}</p>
                 <p> <span style="font-weight:bold">Number of Donkeys Owned:</span> ${donkeyCount}</p>
@@ -391,9 +391,9 @@ const CreateReportScreen = ({ route }) => {
                 <p> <span style="font-weight:bold">Owner Report:</span> ${ownerReports}</p>
                 <p> <span style="font-weight:bold">Observations:</span> ${observations}</p>
                 <p> <span style="font-weight:bold">Advices & Help:</span> ${adviceHelp}</p>
-                <p> <span style="font-weight:bold">Followup Date:</span> ${reportData.followUpDate.toDate().toDateString()}</p><br>
+                <p> <span style="font-weight:bold">Followup Date:</span> ${reportData.followUpDate ? reportData.followUpDate.toDate().toDateString() : 'None'}</p><br>
                 
-                <p>Please respond promptly as the user indicated that a <span style="font-weight:bold">Veterinarian has been requested.</span>.</p>
+                <p>Please respond promptly as the user indicated that a <span style="font-weight:bold">Veterinarian has been requested.</span></p>
                 <p>Kind Regards,</P>
                 <p style="font-weight:bold">DCW APP</p>
                 <img src="https://i.ibb.co/Kmbwqf8/icon.png" alt="Donkey Image" style="width: 45px; height: 45px; display: block;">
@@ -404,7 +404,7 @@ const CreateReportScreen = ({ route }) => {
         {
           headers: {
             'Content-Type': 'application/json',
-            'api-key': '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',
+            'api-key': apiKey,
           },
         }
       );
@@ -442,15 +442,6 @@ const CreateReportScreen = ({ route }) => {
         <Text style={styles.mapText}>Open Map</Text>
       </TouchableOpacity>
 
-      {currentLocation && (
-        <Text>Selected Location: {currentLocation.latitude}, {currentLocation.longitude}</Text>
-        
-      )}
-
-      {selectedLocation && (
-        <Text>Selected Location: {selectedLocation.latitude}, {selectedLocation.longitude}</Text>
-        
-      )}
       <MapPopup
         isVisible={isMapVisible}
         onClose={closeMapPopup}
@@ -478,7 +469,7 @@ const CreateReportScreen = ({ route }) => {
           style={styles.input}
           placeholder="Enter the location"
           value={`Latitude: ${location.latitude}, Longitude: ${location.longitude}`}
-          editable={false} // Set to false to make it read-only
+          editable={false}
         />
       )}
       </View>
@@ -602,8 +593,6 @@ const CreateReportScreen = ({ route }) => {
         </View>
       </View>
 
-      {/* Repeat the above pattern for other fields */}
-
       <View style={styles.fieldContainer}>
         <Text style={styles.label}>Are There Donkeys Showing Signs of Poor Health?</Text>
         <Switch value={poorHealth} onValueChange={setPoorHealth} />
@@ -615,10 +604,6 @@ const CreateReportScreen = ({ route }) => {
       <View style={styles.fieldContainer}>
         <Text style={styles.label}>Take a Photo of the Donkey</Text>
         <TouchableOpacity style={styles.photoButton} onPress={handleImagePick}>
-          {/* {photo ? (
-            <Image source={{ uri: photo }} style={styles.photoPreview} />
-          ) : (
-          )} */}
           <Text style={styles.photoButtonText}>Upload Photo</Text>
         </TouchableOpacity>
         <TouchableOpacity

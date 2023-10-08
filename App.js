@@ -14,6 +14,7 @@ import OnboardingScreen from './screens/OnboardingScreen';
 import SettingsScreen from './screens/SettingsScreen';
 import NotificationsScreen from './screens/NotificationsScreen';
 import LeaderboardScreen from './screens/LeaderboardScreen';
+import EditReportScreen from './screens/EditReportScreen';
 
 
 
@@ -42,9 +43,11 @@ export default function App() {
         <Stack.Screen name="CreateReport" component={CreateReportScreen} options={{ headerLeft: null, title: 'Create Report',  }}/>
         <Stack.Screen name="ViewReports" component={ViewReportsScreen} options={{title: 'View Reports',}}/>
         <Stack.Screen name="ReportDetails" component={ReportDetailsScreen} options={{title: 'Report Details',}}/>
+        <Stack.Screen name="EditReport" component={EditReportScreen} options={{title: 'Edit Report',}}/>
         <Stack.Screen name="Settings" component={SettingsScreen} options={{headerShown: false,}} />
         <Stack.Screen name="Notifications" component={NotificationsScreen} options={{headerShown: false,}} />
         <Stack.Screen name="Leaderboard" component={LeaderboardScreen} options={{headerShown: false,}} />
+
       </Stack.Navigator>
     </NavigationContainer>
     </TourGuideProvider>

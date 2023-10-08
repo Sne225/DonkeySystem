@@ -1,13 +1,11 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, ScrollView, Alert } from 'react-native';
-import { CheckBox } from 'react-native-check-box';
 import { useNavigation } from '@react-navigation/native';
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
 import { getFirestore, setDoc, doc } from 'firebase/firestore';
 import { Feather, FontAwesome } from '@expo/vector-icons';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Modal from 'react-native-modal';
-import { Checkbox } from 'react-native-paper';
 
 const facebookIcon = require('../assets/images/facebook.png');
 const googleIcon = require('../assets/images/google.png');
@@ -109,6 +107,10 @@ const CreateAccountScreens = () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
+
+  const handleSignIn = () => {
+    navigation.navigate("Login");
+  }
 
   return (
     <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollViewContent}>
@@ -213,6 +215,11 @@ const CreateAccountScreens = () => {
           <Text style={styles.socialButtonText}>Google</Text>
         </TouchableOpacity>
       </View>
+
+      <Text style={styles.signInText}>
+        Have an account?
+        <Text style={styles.signInLink} onPress={handleSignIn}> Login</Text>
+      </Text>
     </View>
     </ScrollView>
   );
@@ -334,6 +341,19 @@ const styles = StyleSheet.create({
     borderColor: 'lightgrey',
     borderRadius: 5,
     padding: 10,
+    fontWeight: 'bold',
+  },
+  signInText: {
+    textAlign: 'center',
+    justifyContent: "center",
+    fontSize: 16,
+    position: 'relative',
+    top: 30,
+    left: 0,
+    color: "grey"
+  },
+  signInLink: {
+    color: '#009387',
     fontWeight: 'bold',
   },
 });
