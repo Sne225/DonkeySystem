@@ -17,7 +17,7 @@ const EditReportScreen = ({ navigation }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
-
+ 
 
  useEffect(() => {
     // Fetch and update the report details based on reportId
@@ -51,7 +51,6 @@ const EditReportScreen = ({ navigation }) => {
       </View>
     );
   }
-  
 
   const handleSaveReport = async () => {
     try {
@@ -111,6 +110,7 @@ const EditReportScreen = ({ navigation }) => {
         style={styles.input}
         value={reportData?.donkeyCount?.toString() || ''}
         onChangeText={(text) => setReportData({ ...reportData, donkeyCount: Number(text) })}
+        keyboardType="numeric"
       />
 
       <Text style={styles.label}>Male Adult Count:</Text>
@@ -118,6 +118,7 @@ const EditReportScreen = ({ navigation }) => {
         style={styles.input}
         value={reportData?.maleAdultCount?.toString() || ''}
         onChangeText={(text) => setReportData({ ...reportData, maleAdultCount: Number(text) })}
+        keyboardType="numeric"
       />
 
       <Text style={styles.label}>Male Castrated Count:</Text>
@@ -125,6 +126,7 @@ const EditReportScreen = ({ navigation }) => {
         style={styles.input}
         value={reportData?.maleCastratedCount?.toString() || ''}
         onChangeText={(text) => setReportData({ ...reportData, maleCastratedCount: Number(text) })}
+        keyboardType="numeric"
       />
 
       <Text style={styles.label}>Female Adult Count:</Text>
@@ -132,6 +134,7 @@ const EditReportScreen = ({ navigation }) => {
         style={styles.input}
         value={reportData?.femaleAdultCount?.toString() || ''}
         onChangeText={(text) => setReportData({ ...reportData, femaleAdultCount: Number(text) })}
+        keyboardType="numeric"
       />
 
       <Text style={styles.label}>Male Foal Count:</Text>
@@ -139,6 +142,7 @@ const EditReportScreen = ({ navigation }) => {
         style={styles.input}
         value={reportData?.maleFoalCount?.toString() || ''}
         onChangeText={(text) => setReportData({ ...reportData, maleFoalCount: Number(text) })}
+        keyboardType="numeric"
       />
 
       <Text style={styles.label}>Female Foal Count:</Text>
@@ -146,6 +150,7 @@ const EditReportScreen = ({ navigation }) => {
         style={styles.input}
         value={reportData?.femaleFoalCount?.toString() || ''}
         onChangeText={(text) => setReportData({ ...reportData, femaleFoalCount: Number(text) })}
+        keyboardType="numeric"
       />
 
       <Text style={styles.label}>Poor Health:</Text>
@@ -156,11 +161,9 @@ const EditReportScreen = ({ navigation }) => {
       />
 
       <Text style={styles.label}>Photo:</Text>
-      <TextInput
-        style={styles.input}
-        value={reportData?.photo || ''}
-        onChangeText={(text) => setReportData({ ...reportData, photo: text })}
-      />
+      <Text style={styles.input}>
+        {reportData.photo}
+      </Text>
 
       <Text style={styles.label}>Owner Reports:</Text>
       <TextInput
@@ -184,18 +187,20 @@ const EditReportScreen = ({ navigation }) => {
       />
 
       <Text style={styles.label}>Contact Vets:</Text>
-      <TextInput
-        style={styles.input}
-        value={reportData?.contactVets ? 'Yes' : 'No'}
-        onChangeText={(text) => setReportData({ ...reportData, contactVets: text === 'Yes' })}
-      />
+      <Text style={styles.input}>
+      {reportData?.contactVets.toString()}
+      </Text>
+       
 
       <Text style={styles.label}>Follow-up:</Text>
-      <TextInput
-        style={styles.input}
-        value={reportData?.followUp ? 'Yes' : 'No'}
-        onChangeText={(text) => setReportData({ ...reportData, followUp: text === 'Yes' })}
-      />
+      <Text style={styles.input}>
+        {reportData?.followUp.toString()}
+      </Text>
+
+      <Text style={styles.label}>Follow Up Date:</Text>
+      <Text style={styles.input}>
+        {reportData.date?.toDate().toDateString()}
+      </Text>
 
       {/* Success Modal*/}
       <Modal isVisible={showSuccessModal}>

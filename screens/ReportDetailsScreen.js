@@ -71,7 +71,7 @@ const ReportDetailsScreen = () => {
 
   const handleEditReport = () => {
     // Navigate to the EditReport screen and pass the reportId
-    navigation.navigate('EditReport', { reportData });
+    navigation.navigate('EditReport', { reportId });
   };
 
   const handleDeleteReport = async () => {

@@ -30,6 +30,9 @@ const ViewReportScreen = ( {route}) => {
             id: doc.id,
             ...doc.data(),
           }));
+
+          fetchedReports.sort((a, b) => b.date.toDate() - a.date.toDate());
+
           setReports(fetchedReports);
         } catch (error) {
           console.error('Error fetching reports:', error);
