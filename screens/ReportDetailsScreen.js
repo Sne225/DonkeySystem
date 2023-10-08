@@ -22,6 +22,7 @@ const ReportDetailsScreen = () => {
   const [reportData, setReportData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  
 
 
   useEffect(() => {
@@ -70,7 +71,7 @@ const ReportDetailsScreen = () => {
 
   const handleEditReport = () => {
     // Navigate to the EditReport screen and pass the reportId
-    navigation.navigate('EditReport', { reportId });
+    navigation.navigate('EditReport', { reportData });
   };
 
   const handleDeleteReport = async () => {
@@ -136,7 +137,7 @@ const ReportDetailsScreen = () => {
       <Text style={styles.label}>Donkey Owner Location:</Text>
       <Text style={styles.value}>Latitude: {reportData.location.latitude}{'\n'}
         Longitude: {reportData.location.longitude}</Text>
-      <Text style={styles.label}>Reverse Geocoded Location:</Text>
+      <Text style={styles.label}>Actual Address:</Text>
       <Text style={styles.value}>
       {`${reportData.address.street}, ${reportData.address.city}, ${reportData.address.postalCode}, ${reportData.address.region}, ${reportData.address.country}`}
       </Text>

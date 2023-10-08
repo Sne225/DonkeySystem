@@ -31,15 +31,15 @@ const HomeScreen = () => {
       Animated.loop(
         Animated.sequence([
           Animated.timing(scaleValue, {
-            toValue: 1.6, // Scale up to 1.4 times
-            duration: 80, // Animation duration
-            useNativeDriver: true, // To use native driver for performance
+            toValue: 1.6,
+            duration: 80,
+            useNativeDriver: true,
             easing: Easing.linear,
           }),
           Animated.timing(scaleValue, {
-            toValue: 1.1, // Back to the original scale
-            duration: 1300, // Animation duration
-            useNativeDriver: true, // To use native driver for performance
+            toValue: 1.1,
+            duration: 1300,
+            useNativeDriver: true,
             easing: Easing.linear,
           }),
         ]),
@@ -54,7 +54,7 @@ const HomeScreen = () => {
 
 
   const handleButtonPress = () => {
-    setIsAnimating(false); // Toggle the animation state
+    setIsAnimating(false);
   };
 
   let [fontsLoaded] = useFonts({
@@ -64,6 +64,7 @@ const HomeScreen = () => {
   });
 
 
+  //Hook to fetch user data
   useEffect(() => {
     const getUserData = async () => {
       try {
@@ -114,6 +115,7 @@ const HomeScreen = () => {
 
   const handleAnimationSpeed = 2;
 
+  //Load until all the data is loaded and mounted
   if (isLoading) {
       return (
         <View style={styles.container}>
@@ -127,8 +129,13 @@ const HomeScreen = () => {
   return (
 
     <View style={styles.container}>
-      <Text style={{fontSize: 39, color: 'white', position: 'absolute',
-     top: 35, left: 30, fontFamily: 'Inter_600SemiBold' }}>Hi, {userName}
+      <Text style={{
+        fontSize: 39, 
+        color: 'white', 
+        position: 'absolute',
+        top: 35, 
+        left: 30, 
+        fontFamily: 'Inter_600SemiBold' }}>Hi, {userName}
       </Text>
 
       <View style={styles.profileLogo}>
@@ -141,15 +148,30 @@ const HomeScreen = () => {
           </Animated.View>
      </TouchableOpacity>
 
-      <Text style={{fontSize: 20, color: 'white', position: 'absolute', top:87, 
-          left: 30, fontFamily: 'Inter_400Regular'}}>Let's get to work</Text>
+      <Text style={{
+        fontSize: 20, 
+        color: 'white', 
+        position: 'absolute', 
+        top:87,
+        left: 30, 
+        fontFamily: 'Inter_400Regular'}}>Let's get to work</Text>
     
      <Text style={styles.heading}>Project Tasks</Text>
       <View style={styles.tasks}>
-        <Text style={{fontSize: 16, fontFamily: 'Inter_600SemiBold', color: '#009387', position: 'absolute',
-     top: 20, left: 15,}}>Create New Report</Text>
-     <Text style={{fontSize: 12, fontFamily: 'Inter_600SemiBold', color: 'lightgrey',
-     top: 10, left: -20,}}>Create a new report in this section</Text>
+        <Text style={{
+          fontSize: 16, 
+          fontFamily: 'Inter_600SemiBold', 
+          color: '#009387', 
+          position: 'absolute',
+          top: 20, 
+          left: 15,}}>Create New Report</Text>
+
+     <Text style={{
+          fontSize: 12, 
+          fontFamily: 'Inter_600SemiBold', 
+          color: 'lightgrey',
+          top: 10, 
+          left: -20,}}>Create a new report in this section</Text>
     
       <TouchableOpacity style={styles.FAB} onPress={handleCreateReport}>
         <TourGuideZone zone={1}>
@@ -179,15 +201,30 @@ const HomeScreen = () => {
 
       <Text style={styles.heading}>Completed Tasks</Text>   
       <View style={styles.tasks}>
-        <Text style={{fontSize: 16, fontFamily: 'Inter_600SemiBold', color: '#009387', position: 'absolute',
-     top: 20, left: 15,}}>Reports Completed</Text>
-     <Text style={{fontSize: 12, fontFamily: 'Inter_600SemiBold', color: 'lightgrey',
-     top: 10, left: -20,}}>Number of reports you've submitted</Text>
+        <Text style={{
+          fontSize: 16, 
+          fontFamily: 'Inter_600SemiBold', 
+          color: '#009387', 
+          position: 'absolute',
+          top: 20, 
+          left: 15,}}>Reports Completed</Text>
+
+     <Text style={{
+          fontSize: 12, 
+          fontFamily: 'Inter_600SemiBold', 
+          color: 'lightgrey',
+          top: 10, 
+          left: -20,}}>Number of reports you've submitted</Text>
 
       <TouchableOpacity style={styles.FAB} onPress={()=>{}}>
         <TourGuideZone zone={2}>
-        <Text style={{fontSize: 20, color: 'white',
-    fontFamily:  'Inter_600SemiBold', alignItems: 'center', textAlign: 'center', marginRight: 5,}}>{reportCount}</Text>
+        <Text style={{
+          fontSize: 20, 
+          color: 'white',
+          fontFamily:  'Inter_600SemiBold', 
+          alignItems: 'center', 
+          textAlign: 'center', 
+          marginRight: 5,}}>{reportCount}</Text>
      </TourGuideZone>
      <TourGuideZoneByPosition
           zone={2}
@@ -206,10 +243,20 @@ const HomeScreen = () => {
 
       <Text style={styles.heading}>Reports</Text>
       <View style={styles.tasks}>
-        <Text style={{fontSize: 16, fontFamily: 'Inter_600SemiBold', color: '#009387', position: 'absolute',
-     top: 20, left: 15,}}>View Reports</Text>
-     <Text style={{fontSize: 12, fontFamily: 'Inter_600SemiBold', color: 'lightgrey',
-     top: 10, left: -20,}}>Your saved reports are stored in here</Text>
+        <Text style={{
+          fontSize: 16, 
+          fontFamily: 'Inter_600SemiBold', 
+          color: '#009387', 
+          position: 'absolute',
+          top: 20,
+          left: 15,}}>View Reports</Text>
+
+     <Text style={{
+          fontSize: 12, 
+          fontFamily: 'Inter_600SemiBold', 
+          color: 'lightgrey',
+          top: 10, 
+          left: -20,}}>Your saved reports are stored in here</Text>
 
       <TouchableOpacity style={styles.FAB} onPress={handleViewReports}>
          <TourGuideZone zone={3}>
@@ -232,8 +279,6 @@ const HomeScreen = () => {
         />
       </TouchableOpacity>
       </View>
-   
-     
 
       <View style={styles.navigationBar}>
         <TouchableOpacity
@@ -259,7 +304,7 @@ const HomeScreen = () => {
           width={80}
           height={80}
         />
-          <Text style={styles.navButtonText}>Leaderboards</Text>
+          <Text style={styles.navButtonText}>Leaderboard</Text>
         </TouchableOpacity>
        
         <TouchableOpacity
@@ -286,7 +331,7 @@ const HomeScreen = () => {
           onPress={handleSettings}
         >
           <TourGuideZone zone={6}
-      >
+        >
           <Feather name="settings" size={24} color='white' />
           </TourGuideZone>
           <TourGuideZoneByPosition

@@ -4,8 +4,8 @@ import Onboarding from 'react-native-onboarding-swiper';
 import LottieView from 'lottie-react-native';
 import Lottie from 'lottie-react-native';
 import { useNavigation } from '@react-navigation/native';
-LogBox.ignoreLogs(['ViewPropTypes']);
-// import { setItem } from '../utils/asyncStorage';
+LogBox.ignoreLogs(['ViewPropTypes']); //I am suppressing a small bug that does not have an effect on the app
+
 
 const {width, height} = Dimensions.get('window');
 
@@ -39,7 +39,7 @@ export default function OnboardingScreen() {
                 },
                 {
                     
-                    backgroundColor: '#317773',
+                    backgroundColor: '#01786F',
                     image: (
                         <View style={styles.lottie}>
                             <LottieView source={require('../assets/animations/easy.json')} autoPlay loop />
