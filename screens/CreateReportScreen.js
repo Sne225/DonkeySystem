@@ -344,7 +344,7 @@ const CreateReportScreen = ({ route }) => {
       const reportDataString = JSON.stringify(reportData, null, 2);
       const uniqueId = Date.now().toString();
       const subject = `Emergency Notification - ${uniqueId}`;
-      //Place API here
+      const apiKey = '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';
       let followUpDate = reportData.followUpDate;
       
   
