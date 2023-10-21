@@ -11,7 +11,7 @@ Below are the screenshots and overview of how the UI looks.
 ![Image](https://github.com/Sne225/DonkeySystem/assets/64343614/cc5e77f6-d979-4e39-bc29-43725bed05da)
 
 # Tools Used
-For the project, we used the following tools:
+For the project, these are the following tools used:
 - React Native
 - Firebase
 - Node.js
