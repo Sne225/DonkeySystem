@@ -6,7 +6,8 @@ This system is designed to make the lives and job of the DCW workers easier, and
 
 # Overview
 
-Below are the screenshots and overview of how the UI looks. 
+Below is how the User K
+Interface looks and the overview of the application.
 
 ![Image](https://github.com/Sne225/DonkeySystem/assets/64343614/cc5e77f6-d979-4e39-bc29-43725bed05da)
 
@@ -20,7 +21,7 @@ For the project, these are the following tools used:
 - Git
 
 # Features
-The application allows the folloqing features:
+The application has the following features:
 - Creating User Account and Login 🔐
 - Data Driven Updates 🔁
 - Gamification Using Leaderboard 🤼
