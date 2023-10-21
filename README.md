@@ -6,7 +6,7 @@ This system is designed to make the lives and job of the DCW workers easier, and
 
 # Overview
 
-Below is how the User K
+Below is how the User
 Interface looks and the overview of the application.
 
 ![Image](https://github.com/Sne225/DonkeySystem/assets/64343614/cc5e77f6-d979-4e39-bc29-43725bed05da)
