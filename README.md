@@ -17,6 +17,7 @@ For the project, these are the following tools used:
 - Node.js
 - Visual Studio Code
 - Expo CLI
+- Git
 
 # Features
 The application allows the folloqing features:
