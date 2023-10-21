@@ -18,7 +18,7 @@ For the project, these are the following tools used:
 - Node.js
 - Visual Studio Code
 - Expo CLI
-- Git
+- Git (Version Control)
 
 # Features
 The application has the following features:
