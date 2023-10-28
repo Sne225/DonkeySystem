@@ -2,7 +2,7 @@
 
 This system is for the Donkey Care workers, who are part of the Bahanwana Donkey Friends project, which focuses its efforts on holistically improving the welfare of donkeys and the well-being of people in rural communities.
 
-This system is designed to make the lives and job of the DCW workers easier, and ensure they are able to capture insights with the app. You can view the Business Case [](https://drive.google.com/file/d/1JyWTbtv5kA3xkDeCeUtWrv12-ZkmST6U/view?usp=sharing) to understand more about the business problem.
+This system is designed to make the lives and job of the DCW workers easier, and ensure they are able to capture insights with the app. You can view the [Business Case](https://drive.google.com/file/d/1JyWTbtv5kA3xkDeCeUtWrv12-ZkmST6U/view?usp=sharing) to understand more about the business problem.
 
 # Overview
 
