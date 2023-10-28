@@ -26,10 +26,12 @@ The application has the following features:
 - Data Driven Updates 🔁
 - Gamification Using Leaderboard 🤼
 - Create, View, Edit and Delete Reports 🗃
-- SMTP Email Notification ℹ
+- SMTP Email Notification ℹ 
 - Geocoding and Reverse Geocoding 🗺
 - Onboarding and Guiding Features 🔍
 - And some cool animations ✨😎
+
+Here is some slight [demo](https://drive.google.com/file/d/1mKLXIWEO4p__IxQoIXe04NQdCwkMTyEt/view?usp=drivesdk) of the app.
 
 # Award - Top 3 Final Year Project
 We as the team, have been fortunate enough to be on the top 3 School of IT Showcase in the Information Systems department, and we have been placed on 3rd place for our Systems Development Project. This is a huge milestone and a very great appreciation. The team was comrpised of me (Software Developer), Thamsanqa Gaika (Soft Skills), Sinqobile Mngoma (Project Manager) and Sinenkosi Khumalo (Business Analyst). It was a great yet fruitful experience!
