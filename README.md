@@ -35,8 +35,6 @@ The application has the following features:
 We as the team, have been fortunate enough to be on the top 3 School of IT Showcase in the Information Systems department, and we have been placed on 3rd place for our Systems Development Project. This is a huge milestone and a very great appreciation. The team was comrpised of me (Software Developer), Thamsanqa Gaika (Soft Skills), Sinqobile Mngoma (Project Manager) and Sinenkosi Khumalo (Business Analyst). It was a great yet fruitful experience!
 
 ![Award](https://github.com/Sne225/DonkeySystem/assets/64343614/1366f6de-40f9-4f06-8bbb-bc9baed07ede)
-
-![IMG_20231028_012731](https://github.com/Sne225/DonkeySystem/assets/64343614/87f10813-429f-45db-a1e0-dba3b22ba1d2)
  
 
 For more info about the project initiative, please visit this [article](https://www.up.ac.za/usr/news/post_3048907-up-led-community-project-puts-the-welfare-of-donkeys-and-people-in-the-driving-seat)
