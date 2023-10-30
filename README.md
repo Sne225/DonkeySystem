@@ -26,7 +26,7 @@ The application has the following features:
 - Data Driven Updates 🔁
 - Gamification Using Leaderboard 🤼
 - Create, View, Edit and Delete Reports 🗃
-- SMTP Email Notification ℹ 
+- SMTP Email Notification 📩
 - Geocoding and Reverse Geocoding 🗺
 - Onboarding and Guiding Features 🔍
 - And some cool animations ✨😎
