@@ -17,8 +17,9 @@ For the project, these are the following tools used:
 - Firebase
 - Node.js
 - Visual Studio Code
-- Expo CLI
+- Expo CLI (and Expo Packages)
 - Git (Version Control)
+- Sendinblue API (For SMTP)
 
 # Features
 The application has the following features:
